@@ -3,312 +3,400 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Support CX · Dashboard Executivo</title>
+<title>Support CX · Dashboard Executivo — Memed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+:root {
+  --bg:          #0A0F1E;
+  --bg-mid:      #0F1628;
+  --bg-card:     #131C30;
+  --bg-card-hov: #182038;
+  --bg-glass:    rgba(19,28,48,0.8);
 
-  :root {
-    --navy: #0D1B2A;
-    --navy-mid: #162032;
-    --navy-card: #1C2B3A;
-    --blue: #0078C8;
-    --blue-light: #1A9FE0;
-    --blue-muted: rgba(0,120,200,0.15);
-    --teal: #00C2A8;
-    --white: #F4F8FC;
-    --text: #E8EFF6;
-    --text-muted: #7A93AD;
-    --text-dim: #4A6070;
-    --border: rgba(255,255,255,0.06);
-    --border-accent: rgba(0,120,200,0.3);
-    --success: #00C2A8;
-    --warn: #F0A500;
-    --danger: #E05C5C;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
+  /* Memed brand */
+  --violet:      #b1b1ff;
+  --violet-dim:  rgba(177,177,255,0.12);
+  --violet-glow: rgba(177,177,255,0.25);
+  --blue:        #4E7FFF;
+  --blue-dim:    rgba(78,127,255,0.12);
+  --teal:        #00D4B4;
+  --teal-dim:    rgba(0,212,180,0.12);
+  --warn:        #FFAE42;
+  --warn-dim:    rgba(255,174,66,0.12);
+  --danger:      #FF6B6B;
+  --danger-dim:  rgba(255,107,107,0.12);
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  --text:        #E4EAFF;
+  --text-muted:  #7B8BB5;
+  --text-dim:    #3D4D70;
+  --border:      rgba(177,177,255,0.07);
+  --border-med:  rgba(177,177,255,0.14);
+  --border-hi:   rgba(177,177,255,0.28);
 
-  body {
-    background: var(--navy);
-    color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+  --radius:    14px;
+  --radius-sm: 8px;
+  --radius-xs: 5px;
+}
 
-  /* LAYOUT */
-  .shell { display: flex; min-height: 100vh; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .sidebar {
-    width: 220px; flex-shrink: 0;
-    background: var(--navy-mid);
-    border-right: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    padding: 28px 0;
-    position: fixed; top: 0; left: 0; bottom: 0;
-    z-index: 100;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  .logo {
-    padding: 0 24px 28px;
-    border-bottom: 1px solid var(--border);
-  }
-  .logo-mark {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .logo-dot {
-    width: 28px; height: 28px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--blue), var(--teal));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: white;
-  }
-  .logo-text { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.02em; }
-  .logo-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-med); border-radius: 3px; }
 
-  .nav { padding: 20px 0; flex: 1; }
-  .nav-label {
-    font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--text-dim);
-    padding: 0 24px; margin-bottom: 6px; margin-top: 16px;
-  }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 24px; cursor: pointer;
-    color: var(--text-muted); font-size: 13px; font-weight: 400;
-    transition: all 0.15s; border-left: 2px solid transparent;
-  }
-  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-  .nav-item.active {
-    color: var(--blue-light); border-left-color: var(--blue);
-    background: var(--blue-muted); font-weight: 500;
-  }
-  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+/* ── LAYOUT ── */
+.shell { display: flex; min-height: 100vh; }
 
-  .sidebar-footer {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border);
-    font-size: 11px; color: var(--text-dim);
-  }
-  .sidebar-footer strong { display: block; color: var(--text-muted); margin-bottom: 2px; }
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 230px; flex-shrink: 0;
+  background: var(--bg-mid);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: fixed; inset: 0 auto 0 0;
+  z-index: 200; overflow-y: auto;
+}
 
-  .main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; }
+.sidebar-brand {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-pill {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--violet-dim);
+  border: 1px solid var(--border-med);
+  border-radius: 40px;
+  padding: 6px 14px 6px 8px;
+}
+.brand-gem {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--violet), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff; letter-spacing: -0.5px;
+}
+.brand-label { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 0.01em; }
+.brand-sub { font-size: 9px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; padding-left: 2px; }
 
-  .topbar {
-    height: 60px; background: var(--navy-mid);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px; position: sticky; top: 0; z-index: 50;
-  }
-  .topbar-left { display: flex; align-items: center; gap: 16px; }
-  .page-title { font-size: 16px; font-weight: 600; color: var(--text); }
-  .page-period {
-    font-size: 11px; color: var(--text-muted);
-    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-    padding: 3px 10px; border-radius: 20px;
-  }
-  .topbar-right { display: flex; align-items: center; gap: 10px; }
+.nav-section { padding: 10px 0; }
+.nav-group-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding: 12px 20px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px; cursor: pointer;
+  color: var(--text-muted); font-size: 13px; font-weight: 400;
+  transition: all 0.15s; position: relative;
+  border-left: 2px solid transparent; margin: 1px 0;
+}
+.nav-item:hover { color: var(--text); background: var(--violet-dim); }
+.nav-item.active {
+  color: var(--violet); font-weight: 600;
+  border-left-color: var(--violet);
+  background: var(--violet-dim);
+}
+.nav-icon { font-size: 16px; width: 20px; text-align: center; opacity: .8; }
+.nav-item.active .nav-icon { opacity: 1; }
 
-  .filter-bar {
-    background: var(--navy-mid);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 32px;
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  }
-  .filter-label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
-  .filter-select {
-    background: var(--navy-card); border: 1px solid var(--border-accent);
-    color: var(--text); font-size: 12px; padding: 5px 10px;
-    border-radius: var(--radius-sm); cursor: pointer; outline: none;
-    font-family: inherit;
-  }
-  .filter-select:focus { border-color: var(--blue); }
-  .filter-btn {
-    font-size: 11px; padding: 5px 14px; border-radius: var(--radius-sm);
-    border: 1px solid var(--border-accent); background: transparent;
-    color: var(--text-muted); cursor: pointer; font-family: inherit;
-    transition: all 0.15s;
-  }
-  .filter-btn:hover, .filter-btn.active {
-    background: var(--blue-muted); color: var(--blue-light); border-color: var(--blue);
-  }
-  .filter-reset {
-    margin-left: auto; font-size: 11px; color: var(--text-dim); cursor: pointer;
-    padding: 5px 10px; border-radius: var(--radius-sm);
-  }
-  .filter-reset:hover { color: var(--text-muted); }
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+.sidebar-user {
+  display: flex; align-items: center; gap: 10px;
+}
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--violet), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white; flex-shrink: 0;
+}
+.user-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.user-role { font-size: 10px; color: var(--text-muted); }
 
-  .content { padding: 28px 32px; display: flex; flex-direction: column; gap: 28px; }
+/* ── MAIN ── */
+.main { margin-left: 230px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
-  /* SECTIONS */
-  .section { display: none; }
-  .section.active { display: flex; flex-direction: column; gap: 28px; }
+/* ── TOPBAR ── */
+.topbar {
+  height: 62px; background: var(--bg-mid);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(12px);
+}
+.topbar-title { font-size: 17px; font-weight: 700; color: var(--text); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.count-pill {
+  font-size: 11px; font-weight: 500; color: var(--violet);
+  background: var(--violet-dim); border: 1px solid var(--border-med);
+  padding: 4px 12px; border-radius: 20px;
+}
 
-  /* KPI GRID */
-  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .kpi-card {
-    background: var(--navy-card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px 22px;
-    display: flex; flex-direction: column; gap: 12px;
-    transition: border-color 0.2s;
-  }
-  .kpi-card:hover { border-color: var(--border-accent); }
-  .kpi-card.accent { border-top: 2px solid var(--blue); }
-  .kpi-card.success { border-top: 2px solid var(--success); }
-  .kpi-card.warn { border-top: 2px solid var(--warn); }
-  .kpi-card.neutral { border-top: 2px solid var(--text-dim); }
+/* ── MONTH TABS ── */
+.month-tabs {
+  display: flex; align-items: center; gap: 2px;
+  padding: 10px 32px;
+  background: var(--bg-mid);
+  border-bottom: 1px solid var(--border);
+}
+.month-tab {
+  font-size: 12px; font-weight: 500;
+  padding: 6px 16px; border-radius: 20px;
+  cursor: pointer; color: var(--text-muted);
+  transition: all 0.15s; border: 1px solid transparent;
+  display: flex; align-items: center; gap: 6px;
+}
+.month-tab:hover { color: var(--text); background: var(--violet-dim); }
+.month-tab.active {
+  color: var(--violet); font-weight: 600;
+  background: var(--violet-dim); border-color: var(--border-med);
+}
+.month-tab-count {
+  font-size: 10px; font-weight: 700;
+  background: var(--violet); color: var(--bg);
+  padding: 1px 6px; border-radius: 10px; line-height: 1.6;
+}
+.month-tab.active .month-tab-count { background: var(--violet); }
+.month-tab:not(.active) .month-tab-count { background: var(--text-dim); color: var(--bg-mid); }
+.month-divider { width: 1px; height: 18px; background: var(--border); margin: 0 6px; }
+.month-all { font-size: 12px; font-weight: 400; }
 
-  .kpi-header { display: flex; align-items: flex-start; justify-content: space-between; }
-  .kpi-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
-  .kpi-icon { font-size: 18px; opacity: 0.7; }
-  .kpi-value { font-size: 32px; font-weight: 700; color: var(--text); line-height: 1; }
-  .kpi-value.blue { color: var(--blue-light); }
-  .kpi-value.green { color: var(--success); }
-  .kpi-value.warn { color: var(--warn); }
-  .kpi-footer { font-size: 11px; color: var(--text-dim); }
-  .kpi-footer strong { color: var(--success); }
-  .kpi-footer .neutral { color: var(--text-muted); }
+/* ── FILTER BAR ── */
+.filter-bar {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 32px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.filter-label { font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; margin-right: 4px; }
+.filter-sel {
+  background: var(--bg-card); border: 1px solid var(--border-med);
+  color: var(--text); font-size: 12px; font-weight: 400;
+  padding: 5px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; outline: none; font-family: inherit;
+  transition: border-color 0.15s;
+}
+.filter-sel:focus { border-color: var(--violet); }
+.ftag {
+  font-size: 11px; font-weight: 500;
+  padding: 4px 12px; border-radius: 20px;
+  border: 1px solid var(--border-med);
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.ftag:hover { border-color: var(--violet); color: var(--violet); background: var(--violet-dim); }
+.ftag.on { background: var(--violet-dim); color: var(--violet); border-color: var(--violet); }
+.filter-reset { margin-left: auto; font-size: 11px; color: var(--text-dim); cursor: pointer; padding: 4px 8px; border-radius: var(--radius-xs); transition: color 0.15s; }
+.filter-reset:hover { color: var(--text-muted); }
 
-  /* CHART GRID */
-  .charts-row { display: grid; gap: 16px; }
-  .charts-row.col2 { grid-template-columns: 1fr 1fr; }
-  .charts-row.col3 { grid-template-columns: 1fr 1fr 1fr; }
-  .charts-row.col-6-4 { grid-template-columns: 3fr 2fr; }
-  .charts-row.col-4-6 { grid-template-columns: 2fr 3fr; }
+/* ── CONTENT ── */
+.content { padding: 28px 32px; display: flex; flex-direction: column; gap: 24px; }
+.section { display: none; flex-direction: column; gap: 24px; }
+.section.active { display: flex; }
 
-  .chart-card {
-    background: var(--navy-card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 22px 24px;
-  }
-  .chart-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
-  .chart-title { font-size: 13px; font-weight: 600; color: var(--text); }
-  .chart-subtitle { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-  .chart-badge {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
-    padding: 3px 8px; border-radius: 4px;
-  }
-  .badge-blue { background: var(--blue-muted); color: var(--blue-light); }
-  .badge-green { background: rgba(0,194,168,0.15); color: var(--success); }
-  .chart-wrap { position: relative; }
+/* ── KPI GRID ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 
-  /* TABLE */
-  .table-card {
-    background: var(--navy-card); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden;
-  }
-  .table-head {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .table-title { font-size: 13px; font-weight: 600; }
-  .table-count { font-size: 11px; color: var(--text-muted); }
-  table { width: 100%; border-collapse: collapse; }
-  th {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
-    text-transform: uppercase; color: var(--text-dim);
-    padding: 10px 16px; text-align: left;
-    border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.02);
-  }
-  td {
-    padding: 11px 16px; font-size: 12px; color: var(--text);
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  .td-id { font-family: monospace; font-size: 11px; color: var(--blue-light); }
-  .td-id a { color: inherit; text-decoration: none; }
-  .td-id a:hover { text-decoration: underline; }
+.kpi {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+  cursor: default;
+}
+.kpi::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.kpi.v::before { background: var(--violet); }
+.kpi.t::before { background: var(--teal); }
+.kpi.w::before { background: var(--warn); }
+.kpi.b::before { background: var(--blue); }
+.kpi:hover { border-color: var(--border-med); transform: translateY(-1px); }
 
-  /* BADGES */
-  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
-  .badge-status-enc { background: rgba(0,194,168,0.15); color: var(--success); }
-  .badge-status-ag { background: rgba(240,165,0,0.15); color: var(--warn); }
-  .badge-status-open { background: rgba(0,120,200,0.15); color: var(--blue-light); }
-  .badge-cat-bug { background: rgba(224,92,92,0.15); color: #E05C5C; }
-  .badge-cat-usab { background: rgba(0,120,200,0.15); color: var(--blue-light); }
-  .badge-cat-perf { background: rgba(240,165,0,0.15); color: var(--warn); }
-  .badge-cat-default { background: rgba(255,255,255,0.07); color: var(--text-muted); }
-  .badge-sim { background: rgba(0,194,168,0.15); color: var(--success); }
-  .badge-nao { background: rgba(255,255,255,0.05); color: var(--text-dim); }
-  .badge-rec { background: rgba(240,165,0,0.15); color: var(--warn); }
+.kpi-glow {
+  position: absolute; top: -20px; right: -20px;
+  width: 80px; height: 80px; border-radius: 50%;
+  opacity: 0.06; pointer-events: none;
+}
+.kpi.v .kpi-glow { background: var(--violet); }
+.kpi.t .kpi-glow { background: var(--teal); }
+.kpi.w .kpi-glow { background: var(--warn); }
+.kpi.b .kpi-glow { background: var(--blue); }
 
-  /* SLA BAR */
-  .sla-bar { display: flex; align-items: center; gap: 8px; }
-  .sla-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
-  .sla-fill { height: 100%; border-radius: 2px; }
-  .sla-val { font-size: 11px; color: var(--text-muted); min-width: 36px; text-align: right; }
+.kpi-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; }
+.kpi-val { font-size: 34px; font-weight: 800; line-height: 1; margin-bottom: 10px; }
+.kpi.v .kpi-val { color: var(--violet); }
+.kpi.t .kpi-val { color: var(--teal); }
+.kpi.w .kpi-val { color: var(--warn); }
+.kpi.b .kpi-val { color: var(--blue); }
+.kpi-val span { font-size: 16px; font-weight: 400; color: var(--text-muted); }
+.kpi-foot { font-size: 11px; color: var(--text-dim); }
+.kpi-foot strong { color: var(--teal); }
+.kpi-foot .hi { color: var(--violet); }
+.kpi-foot .wu { color: var(--warn); }
 
-  /* INSIGHTS */
-  .insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .insight-card {
-    background: var(--navy-card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 18px 20px;
-    display: flex; gap: 14px;
-  }
-  .insight-icon {
-    width: 36px; height: 36px; border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0;
-  }
-  .insight-icon.blue { background: var(--blue-muted); }
-  .insight-icon.green { background: rgba(0,194,168,0.15); }
-  .insight-icon.warn { background: rgba(240,165,0,0.12); }
-  .insight-icon.red { background: rgba(224,92,92,0.12); }
-  .insight-body {}
-  .insight-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-  .insight-text { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+/* ── GRID LAYOUTS ── */
+.row { display: grid; gap: 14px; }
+.col2 { grid-template-columns: 1fr 1fr; }
+.col3 { grid-template-columns: 1fr 1fr 1fr; }
+.col64 { grid-template-columns: 3fr 2fr; }
+.col46 { grid-template-columns: 2fr 3fr; }
 
-  /* EXEC SUMMARY */
-  .exec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .exec-block {
-    background: var(--navy-card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 22px 24px;
-  }
-  .exec-block-title {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--blue-light);
-    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
-  }
-  .exec-block-title::before {
-    content: ''; width: 3px; height: 14px; background: var(--blue);
-    border-radius: 2px; display: inline-block;
-  }
-  .exec-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .exec-list li { font-size: 12px; color: var(--text-muted); padding-left: 14px; position: relative; }
-  .exec-list li::before { content: '·'; position: absolute; left: 0; color: var(--blue); font-size: 16px; line-height: 1; }
-  .exec-list li strong { color: var(--text); }
+/* ── CARD ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border-med); }
+.card-head {
+  padding: 18px 22px 14px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.card-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.card-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.card-body { padding: 18px 22px; }
+.chart-wrap { position: relative; }
 
-  .exec-highlight {
-    background: linear-gradient(135deg, rgba(0,120,200,0.1), rgba(0,194,168,0.05));
-    border: 1px solid var(--border-accent); border-radius: var(--radius);
-    padding: 20px 24px; grid-column: 1 / -1;
-    display: flex; gap: 24px; align-items: flex-start;
-  }
-  .exec-highlight-kpis { display: flex; gap: 32px; flex-shrink: 0; }
-  .exec-kpi { text-align: center; }
-  .exec-kpi-val { font-size: 28px; font-weight: 700; color: var(--blue-light); }
-  .exec-kpi-val.green { color: var(--success); }
-  .exec-kpi-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
-  .exec-divider { width: 1px; background: var(--border); align-self: stretch; }
-  .exec-narrative { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
-  .exec-narrative p + p { margin-top: 10px; }
+/* ── CHIP / BADGE ── */
+.chip {
+  display: inline-flex; align-items: center;
+  font-size: 10px; font-weight: 600; padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+.chip-v  { background: var(--violet-dim); color: var(--violet); }
+.chip-t  { background: var(--teal-dim);   color: var(--teal);   }
+.chip-w  { background: var(--warn-dim);   color: var(--warn);   }
+.chip-d  { background: var(--danger-dim); color: var(--danger); }
+.chip-b  { background: var(--blue-dim);   color: var(--blue);   }
+.chip-muted { background: rgba(255,255,255,0.05); color: var(--text-muted); }
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* ── TABLE ── */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding: 10px 14px; text-align: left;
+  background: rgba(177,177,255,0.03);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td {
+  padding: 11px 14px; font-size: 12px; font-weight: 400;
+  color: var(--text); border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(177,177,255,0.025); }
+.td-mono { font-family: 'Outfit', monospace; font-size: 11px; color: var(--violet); font-weight: 600; }
+.td-sub { font-size: 11px; color: var(--text-muted); }
 
-  /* RESPONSIVE hint */
-  @media(max-width: 1100px) {
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    .charts-row.col3 { grid-template-columns: 1fr 1fr; }
-  }
+/* ── SLA BAR ── */
+.sla-row { display: flex; align-items: center; gap: 8px; }
+.sla-track { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.sla-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
+.sla-num { font-size: 11px; color: var(--text-muted); min-width: 38px; text-align: right; font-weight: 500; }
+
+/* ── INSIGHTS ── */
+.insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.insight {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+  transition: border-color 0.15s;
+}
+.insight:hover { border-color: var(--border-med); }
+.insight-ico {
+  width: 38px; height: 38px; flex-shrink: 0; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.insight-ico.v { background: var(--violet-dim); }
+.insight-ico.t { background: var(--teal-dim); }
+.insight-ico.w { background: var(--warn-dim); }
+.insight-ico.d { background: var(--danger-dim); }
+.insight-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.insight-body { font-size: 11px; color: var(--text-muted); line-height: 1.55; }
+
+/* ── EXEC SUMMARY ── */
+.exec-hero {
+  background: linear-gradient(135deg, rgba(177,177,255,0.07) 0%, rgba(78,127,255,0.04) 100%);
+  border: 1px solid var(--border-med);
+  border-radius: var(--radius);
+  padding: 26px 28px;
+  display: flex; gap: 32px; align-items: flex-start;
+}
+.exec-kpis { display: flex; gap: 28px; flex-shrink: 0; }
+.exec-kpi { text-align: center; }
+.exec-kv { font-size: 30px; font-weight: 800; color: var(--violet); line-height: 1; }
+.exec-kv.t { color: var(--teal); }
+.exec-kl { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-top: 4px; }
+.exec-sep { width: 1px; background: var(--border); align-self: stretch; }
+.exec-text { font-size: 12px; color: var(--text-muted); line-height: 1.75; }
+.exec-text p + p { margin-top: 10px; }
+.exec-text strong { color: var(--text); font-weight: 600; }
+
+.exec-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.exec-block { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+.exec-bt {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--violet);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.exec-bt::before { content: ''; width: 3px; height: 12px; background: var(--violet); border-radius: 2px; }
+.exec-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.exec-list li { font-size: 12px; color: var(--text-muted); padding-left: 14px; position: relative; line-height: 1.5; }
+.exec-list li::before { content: '·'; position: absolute; left: 2px; color: var(--violet); font-size: 18px; line-height: 0.9; }
+.exec-list li strong { color: var(--text); }
+
+/* ── PROGRESS BARS (metric rows) ── */
+.metric-row { display: flex; flex-direction: column; gap: 12px; }
+.metric-item {}
+.metric-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.metric-lbl { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+.metric-val { font-size: 12px; font-weight: 700; color: var(--text); }
+.metric-pct { font-size: 11px; color: var(--text-dim); font-weight: 400; margin-left: 4px; }
+.m-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.m-fill { height: 100%; border-radius: 3px; }
+.m-desc { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+
+/* ── COMPARE CARD (month comparison) ── */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.compare-month { display: flex; flex-direction: column; gap: 14px; }
+.compare-header { display: flex; align-items: center; justify-content: space-between; }
+.compare-month-label { font-size: 13px; font-weight: 700; color: var(--text); }
+.compare-month-count { font-size: 22px; font-weight: 800; color: var(--violet); }
+.compare-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 36px 20px; text-align: center;
+  border: 1px dashed var(--border-med); border-radius: var(--radius-sm);
+  color: var(--text-dim); gap: 8px;
+}
+.compare-empty .ico { font-size: 28px; opacity: 0.4; }
+.compare-empty p { font-size: 12px; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -316,737 +404,746 @@
 
 <!-- SIDEBAR -->
 <nav class="sidebar">
-  <div class="logo">
-    <div class="logo-mark">
-      <div class="logo-dot">M</div>
+  <div class="sidebar-brand">
+    <div class="brand-pill">
+      <div class="brand-gem">M</div>
+      <div class="brand-label">Memed</div>
+    </div>
+    <div class="brand-sub">Support CX · Dashboard</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-group-label">Visões</div>
+    <div class="nav-item active" onclick="goSection('overview')"><span class="nav-icon">◈</span> Visão Geral</div>
+    <div class="nav-item" onclick="goSection('mensal')"><span class="nav-icon">◫</span> Por Mês</div>
+    <div class="nav-item" onclick="goSection('cards')"><span class="nav-icon">≡</span> Cards</div>
+    <div class="nav-item" onclick="goSection('sla')"><span class="nav-icon">◷</span> SLA & Tempo</div>
+    <div class="nav-item" onclick="goSection('insights')"><span class="nav-icon">◉</span> Insights</div>
+    <div class="nav-item" onclick="goSection('exec')"><span class="nav-icon">▣</span> Executivo</div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="sidebar-user">
+      <div class="user-avatar">C</div>
       <div>
-        <div class="logo-text">Memed</div>
-        <div class="logo-sub">Support CX</div>
+        <div class="user-name">Chris</div>
+        <div class="user-role">Support Engineer</div>
       </div>
     </div>
-  </div>
-  <div class="nav">
-    <div class="nav-label">Visões</div>
-    <div class="nav-item active" onclick="showSection('overview')">
-      <span class="nav-icon">◈</span> Visão Geral
-    </div>
-    <div class="nav-item" onclick="showSection('cards')">
-      <span class="nav-icon">≡</span> Cards
-    </div>
-    <div class="nav-item" onclick="showSection('sla')">
-      <span class="nav-icon">◷</span> SLA & Tempo
-    </div>
-    <div class="nav-item" onclick="showSection('insights')">
-      <span class="nav-icon">◉</span> Insights
-    </div>
-    <div class="nav-item" onclick="showSection('exec')">
-      <span class="nav-icon">▣</span> Resumo Executivo
-    </div>
-  </div>
-  <div class="sidebar-footer">
-    <strong>Chris · Support Engineer</strong>
-    Atualizado em Jun 2026
   </div>
 </nav>
 
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-left">
-      <div class="page-title" id="pageTitle">Visão Geral</div>
-      <div class="page-period">Junho 2026</div>
-    </div>
+    <div class="topbar-title" id="pageTitle">Visão Geral</div>
     <div class="topbar-right">
-      <div style="font-size:11px;color:var(--text-dim);" id="filteredCount"></div>
+      <div class="count-pill" id="countPill">— cards</div>
     </div>
   </div>
 
+  <!-- MONTH TABS -->
+  <div class="month-tabs" id="monthTabs">
+    <div class="month-tab active" onclick="setMes('all')" id="tab-all">
+      <span class="month-all">Todos os meses</span>
+    </div>
+    <div class="month-divider"></div>
+    <div class="month-tab" onclick="setMes('2026-06')" id="tab-2026-06">
+      Junho 2026 <span class="month-tab-count" id="cnt-2026-06">0</span>
+    </div>
+    <div class="month-tab" onclick="setMes('2026-07')" id="tab-2026-07">
+      Julho 2026 <span class="month-tab-count" id="cnt-2026-07">0</span>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
   <div class="filter-bar">
-    <span class="filter-label">Filtros</span>
-    <select class="filter-select" id="filterCategoria" onchange="applyFilters()">
-      <option value="">Todas as categorias</option>
-    </select>
-    <select class="filter-select" id="filterStatus" onchange="applyFilters()">
-      <option value="">Todos os status</option>
-    </select>
-    <select class="filter-select" id="filterTipo" onchange="applyFilters()">
-      <option value="">Todos os tipos</option>
-    </select>
-    <button class="filter-btn" id="btnJira" onclick="toggleFilter('jira')">Com Jira</button>
-    <button class="filter-btn" id="btnN3" onclick="toggleFilter('n3')">Escalonado N3</button>
-    <button class="filter-btn" id="btnRec" onclick="toggleFilter('rec')">Recorrentes</button>
-    <button class="filter-btn" id="btnIndev" onclick="toggleFilter('indev')">Indevidos</button>
-    <span class="filter-reset" onclick="resetFilters()">↺ Limpar filtros</span>
+    <span class="filter-label">Filtrar</span>
+    <select class="filter-sel" id="fCat" onchange="applyFilters()"><option value="">Todas as categorias</option></select>
+    <select class="filter-sel" id="fStatus" onchange="applyFilters()"><option value="">Todos os status</option></select>
+    <select class="filter-sel" id="fTipo" onchange="applyFilters()"><option value="">Todos os tipos</option></select>
+    <button class="ftag" id="fJira"  onclick="toggleTag('fJira','jira')">🔗 Com Jira</button>
+    <button class="ftag" id="fN3"    onclick="toggleTag('fN3','n3')">↑ N3</button>
+    <button class="ftag" id="fRec"   onclick="toggleTag('fRec','rec')">🔄 Recorrentes</button>
+    <button class="ftag" id="fIndev" onclick="toggleTag('fIndev','indev')">⚠ Indevidos</button>
+    <span class="filter-reset" onclick="resetAll()">↺ Limpar</span>
   </div>
 
   <div class="content">
 
-    <!-- OVERVIEW -->
-    <div class="section active" id="section-overview">
+    <!-- ── OVERVIEW ── -->
+    <div class="section active" id="s-overview">
       <div class="kpi-grid" id="kpiGrid"></div>
-      <div class="charts-row col-6-4">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Distribuição por Categoria</div>
-              <div class="chart-subtitle">Volume de cards por tipo de problema</div>
-            </div>
-            <span class="chart-badge badge-blue" id="totalBadge"></span>
+      <div class="row col64">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Distribuição por Categoria</div><div class="card-sub">Volume de atendimentos por tipo</div></div>
+            <span class="chip chip-v" id="chipTotal"></span>
           </div>
-          <div class="chart-wrap" style="height:220px">
-            <canvas id="chartCategoria"></canvas>
-          </div>
+          <div class="card-body"><div class="chart-wrap" style="height:220px"><canvas id="cCat"></canvas></div></div>
         </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Status Atual</div>
-              <div class="chart-subtitle">Situação dos atendimentos</div>
-            </div>
-          </div>
-          <div class="chart-wrap" style="height:220px">
-            <canvas id="chartStatus"></canvas>
-          </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Status dos Cards</div><div class="card-sub">Situação atual do período</div></div></div>
+          <div class="card-body"><div class="chart-wrap" style="height:220px"><canvas id="cStatus"></canvas></div></div>
         </div>
       </div>
-      <div class="charts-row col2">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Tipo de Demanda</div>
-              <div class="chart-subtitle">Classificação dos atendimentos</div>
-            </div>
-          </div>
-          <div class="chart-wrap" style="height:200px">
-            <canvas id="chartTipo"></canvas>
-          </div>
+      <div class="row col2">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Tipo de Demanda</div><div class="card-sub">Bug, Dúvida, Configuração…</div></div></div>
+          <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="cTipo"></canvas></div></div>
         </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Motivos de Contato</div>
-              <div class="chart-subtitle">Principais assuntos do período</div>
-            </div>
-          </div>
-          <div class="chart-wrap" style="height:200px">
-            <canvas id="chartMotivo"></canvas>
-          </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Motivos de Contato</div><div class="card-sub">Assuntos mais frequentes</div></div></div>
+          <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="cMotivo"></canvas></div></div>
         </div>
       </div>
     </div>
 
-    <!-- CARDS TABLE -->
-    <div class="section" id="section-cards">
-      <div class="table-card">
-        <div class="table-head">
-          <div class="chart-title">Todos os Cards</div>
-          <div class="table-count" id="tableCount"></div>
+    <!-- ── MENSAL ── -->
+    <div class="section" id="s-mensal">
+      <div class="row col2">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Volume por Mês</div><div class="card-sub">Total de cards atendidos</div></div></div>
+          <div class="card-body"><div class="chart-wrap" style="height:220px"><canvas id="cMensal"></canvas></div></div>
         </div>
-        <div style="overflow-x:auto">
-          <table id="cardsTable">
-            <thead>
-              <tr>
-                <th>Card</th>
-                <th>Assunto</th>
-                <th>Categoria</th>
-                <th>Status</th>
-                <th>Tipo</th>
-                <th>Jira</th>
-                <th>N3</th>
-                <th>Rec.</th>
-                <th>SLA 1ª Resp</th>
-                <th>Abertura</th>
-              </tr>
-            </thead>
-            <tbody id="cardsBody"></tbody>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">SLA Médio por Mês</div><div class="card-sub">Horas até 1ª resposta</div></div></div>
+          <div class="card-body"><div class="chart-wrap" style="height:220px"><canvas id="cSlaMensal"></canvas></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Comparativo Mensal</div><div class="card-sub">Junho vs Julho 2026</div></div></div>
+        <div class="card-body" id="compareBody"></div>
+      </div>
+    </div>
+
+    <!-- ── CARDS TABLE ── -->
+    <div class="section" id="s-cards">
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Todos os Cards</div><div class="card-sub" id="tableSubtitle"></div></div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Card</th><th>Assunto</th><th>Categoria</th><th>Status</th>
+              <th>Tipo</th><th>Jira</th><th>N3</th><th>Rec.</th>
+              <th>SLA 1ª Resp.</th><th>Mês</th>
+            </tr></thead>
+            <tbody id="tBody"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- SLA -->
-    <div class="section" id="section-sla">
+    <!-- ── SLA ── -->
+    <div class="section" id="s-sla">
       <div class="kpi-grid" id="slaKpis"></div>
-      <div class="charts-row col2">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">SLA de 1ª Resposta por Card</div>
-              <div class="chart-subtitle">Horas entre abertura e primeira resposta</div>
-            </div>
-            <span class="chart-badge badge-green">Meta &lt;4h</span>
+      <div class="row col2">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">SLA 1ª Resposta por Card</div><div class="card-sub">Horas até primeira resposta</div></div>
+            <span class="chip chip-t">Meta ≤4h</span>
           </div>
-          <div class="chart-wrap" style="height:220px">
-            <canvas id="chartSlaBar"></canvas>
-          </div>
+          <div class="card-body"><div class="chart-wrap" style="height:220px"><canvas id="cSlaBar"></canvas></div></div>
         </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Tempo Total de Atendimento</div>
-              <div class="chart-subtitle">Horas da abertura até última resposta</div>
-            </div>
-          </div>
-          <div class="chart-wrap" style="height:220px">
-            <canvas id="chartTempoBar"></canvas>
-          </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Tempo Total de Atendimento</div><div class="card-sub">Abertura → última resposta</div></div></div>
+          <div class="card-body"><div class="chart-wrap" style="height:220px"><canvas id="cTempoBar"></canvas></div></div>
         </div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <div>
-            <div class="chart-title">SLA Detalhado por Card</div>
-            <div class="chart-subtitle">Comparação entre tempo de 1ª resposta e tempo total</div>
-          </div>
-        </div>
-        <div id="slaDetail"></div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Detalhe por Card</div><div class="card-sub">Comparativo visual de SLA e tempo total</div></div></div>
+        <div class="card-body" id="slaDetail"></div>
       </div>
     </div>
 
-    <!-- INSIGHTS -->
-    <div class="section" id="section-insights">
-      <div class="insights-grid" id="insightsGrid"></div>
-      <div class="charts-row col2">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Apoio de Times Externos</div>
-              <div class="chart-subtitle">Participação de outros times nos atendimentos</div>
-            </div>
-          </div>
-          <div style="padding:8px 0" id="apoioDetail"></div>
+    <!-- ── INSIGHTS ── -->
+    <div class="section" id="s-insights">
+      <div class="insight-grid" id="iGrid"></div>
+      <div class="row col2">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Apoio de Times Externos</div><div class="card-sub">Cards que envolveram outros times</div></div></div>
+          <div class="card-body" id="apoioBody"></div>
         </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title">Indicadores de Qualidade</div>
-              <div class="chart-subtitle">Recorrência, indevidos e oportunidades</div>
-            </div>
-          </div>
-          <div style="padding:8px 0" id="qualidadeDetail"></div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Indicadores de Qualidade</div><div class="card-sub">Recorrência, indevidos e resolução</div></div></div>
+          <div class="card-body" id="qualBody"></div>
         </div>
       </div>
     </div>
 
-    <!-- EXEC SUMMARY -->
-    <div class="section" id="section-exec">
-      <div class="exec-highlight">
-        <div class="exec-highlight-kpis" id="execKpis"></div>
-        <div class="exec-divider"></div>
-        <div class="exec-narrative" id="execNarrative"></div>
+    <!-- ── EXECUTIVO ── -->
+    <div class="section" id="s-exec">
+      <div class="exec-hero">
+        <div class="exec-kpis" id="execKpis"></div>
+        <div class="exec-sep"></div>
+        <div class="exec-text" id="execText"></div>
       </div>
       <div class="exec-grid" id="execGrid"></div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
-</div><!-- /shell -->
+  </div>
+</div>
+</div>
 
 <script>
 const RAW = [
-  {"id":"CXATEND-4929","assunto":"Falha na visualização dos modelos recém-criados","categoria":"Performance","origem":"Jira CX","abertura":"2026-06-17T09:44:41","primeira_resp":"2026-06-17T14:10:01","ultima_resp":"2026-06-17T14:10:01","encerr_jira":"2026-06-22T18:01:51","sla_h":4.42,"tempo_total_h":4.42,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Encerrado","tipo":"Dúvida","motivo":"protocolo-não-exibido","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-06","dia":"2026-06-17","tem_jira":true},
-  {"id":"CXATEND-4936","assunto":"Atestado desconfigurado","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-06-22T13:35:47","primeira_resp":"2026-06-22T14:24:45","ultima_resp":"2026-06-22T14:24:45","encerr_jira":null,"sla_h":0.82,"tempo_total_h":0.82,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Dúvida","motivo":"Impressão-documento-desconfigurado","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-06","dia":"2026-06-22","tem_jira":false},
-  {"id":"CXATEND-4938","assunto":"Personalização receituário","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-06-23T10:44:37","primeira_resp":"2026-06-23T11:12:40","ultima_resp":"2026-06-25T10:20:38","encerr_jira":null,"sla_h":0.47,"tempo_total_h":47.6,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Configuração","motivo":"sincronismo-conta","severidade":"Baixo","recorrente":"Sim","indevido":"Não","mes":"2026-06","dia":"2026-06-23","tem_jira":false},
-  {"id":"CXATEND-4939","assunto":"Visualização do histórico com filtros","categoria":"Bug","origem":"Jira CX","abertura":"2026-06-23T11:32:32","primeira_resp":"2026-06-23T14:35:16","ultima_resp":"2026-06-23T14:35:16","encerr_jira":null,"sla_h":3.05,"tempo_total_h":3.05,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Bug","motivo":"exibir-histórico-pacientes","severidade":"Baixo","recorrente":"Não","indevido":"Sim","mes":"2026-06","dia":"2026-06-23","tem_jira":false},
-  {"id":"CXATEND-4946","assunto":"Erro no cadastro de paciente","categoria":"Bug","origem":"Jira CX","abertura":"2026-06-25T11:23:18","primeira_resp":"2026-06-25T12:36:15","ultima_resp":"2026-06-25T14:50:10","encerr_jira":null,"sla_h":1.22,"tempo_total_h":3.45,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":"N3 Backend","status":"Aguardando cliente","tipo":"Bug","motivo":"erro-cadastro-paciente","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-06","dia":"2026-06-25","tem_jira":false},
-  {"id":"CXATEND-4948","assunto":"Erro no cadastro de paciente","categoria":"Bug","origem":"Jira CX","abertura":"2026-06-25T14:16:47","primeira_resp":"2026-06-25T14:51:30","ultima_resp":"2026-06-25T14:51:30","encerr_jira":null,"sla_h":0.58,"tempo_total_h":0.58,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":"N3 Backend","status":"Aguardando cliente","tipo":"Bug","motivo":"erro-cadastro-paciente","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-06","dia":"2026-06-25","tem_jira":false}
+  {"id":"CXATEND-4929","assunto":"Falha na visualização dos modelos recém-criados","categoria":"Performance","origem":"Jira CX","abertura":"2026-06-17T09:44:41","primeira_resp":"2026-06-17T14:10:01","ultima_resp":"2026-06-17T14:10:01","encerr_jira":"2026-06-22T18:01:51","sla_h":4.42,"tempo_total_h":4.42,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Encerrado","tipo":"Dúvida","motivo":"protocolo-não-exibido","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-06","tem_jira":true,"dia":"2026-06-17"},
+  {"id":"CXATEND-4936","assunto":"Atestado desconfigurado","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-06-22T13:35:47","primeira_resp":"2026-06-22T14:24:45","ultima_resp":"2026-06-22T14:24:45","encerr_jira":null,"sla_h":0.82,"tempo_total_h":0.82,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Dúvida","motivo":"Impressão-documento-desconfigurado","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-06","tem_jira":false,"dia":"2026-06-22"},
+  {"id":"CXATEND-4938","assunto":"Personalização receituário","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-06-23T10:44:37","primeira_resp":"2026-06-23T11:12:40","ultima_resp":"2026-06-25T10:20:38","encerr_jira":null,"sla_h":0.47,"tempo_total_h":47.6,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Configuração","motivo":"sincronismo-conta","severidade":"Baixo","recorrente":"Sim","indevido":"Não","mes":"2026-06","tem_jira":false,"dia":"2026-06-23"},
+  {"id":"CXATEND-4939","assunto":"Visualização do histórico com filtros","categoria":"Bug","origem":"Jira CX","abertura":"2026-06-23T11:32:32","primeira_resp":"2026-06-23T14:35:16","ultima_resp":"2026-06-23T14:35:16","encerr_jira":null,"sla_h":3.05,"tempo_total_h":3.05,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Bug","motivo":"exibir-histórico-pacientes","severidade":"Baixo","recorrente":"Não","indevido":"Sim","mes":"2026-06","tem_jira":false,"dia":"2026-06-23"},
+  {"id":"CXATEND-4946","assunto":"Erro no cadastro de paciente","categoria":"Bug","origem":"Jira CX","abertura":"2026-06-25T11:23:18","primeira_resp":"2026-06-25T12:36:15","ultima_resp":"2026-06-25T14:50:10","encerr_jira":null,"sla_h":1.22,"tempo_total_h":3.45,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":"N3 Backend","status":"Aguardando cliente","tipo":"Bug","motivo":"erro-cadastro-paciente","severidade":"Baixo","recorrente":"Sim","indevido":"Não","mes":"2026-06","tem_jira":false,"dia":"2026-06-25"},
+  {"id":"CXATEND-4948","assunto":"Erro no cadastro de paciente","categoria":"Bug","origem":"Jira CX","abertura":"2026-06-25T14:16:47","primeira_resp":"2026-06-25T14:51:30","ultima_resp":"2026-06-25T14:51:30","encerr_jira":null,"sla_h":0.58,"tempo_total_h":0.58,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":"N3 Backend","status":"Aguardando cliente","tipo":"Bug","motivo":"erro-cadastro-paciente","severidade":"Baixo","recorrente":"Sim","indevido":"Não","mes":"2026-06","tem_jira":false,"dia":"2026-06-25"},
+  {"id":"CXATEND-4954","assunto":"Visualização do histórico com filtros","categoria":"Bug","origem":"Jira CX","abertura":"2026-06-27T12:29:03","primeira_resp":"2026-06-29T09:07:01","ultima_resp":"2026-06-29T09:07:01","encerr_jira":null,"sla_h":0.12,"tempo_total_h":44.63,"sla_cumprido":"Não","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Bug","motivo":"exibir-histórico-pacientes","severidade":"Baixo","recorrente":"Não","indevido":"Sim","mes":"2026-06","tem_jira":false,"dia":"2026-06-27"},
+  {"id":"CXATEND-4961","assunto":"Autenticação Safe ID","categoria":"Autenticação","origem":"Jira CX","abertura":"2026-06-30T11:36:36","primeira_resp":"2026-06-30T12:53:30","ultima_resp":null,"encerr_jira":null,"sla_h":1.28,"tempo_total_h":null,"sla_cumprido":"Não","escalonado_n3":"Sim","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Dúvida","motivo":"erro-assinatura-SafeId","severidade":"Baixo","recorrente":"Sim","indevido":"Não","mes":"2026-06","tem_jira":false,"dia":"2026-06-30"}
 ];
 
 // State
 let filtered = [...RAW];
-let activeFilters = { jira: false, n3: false, rec: false, indev: false };
-
-// Charts instances
+let curMes = 'all';
+let curSection = 'overview';
+let tags = { jira:false, n3:false, rec:false, indev:false };
 let charts = {};
 
-const C = {
-  blue: '#0078C8', blueLight: '#1A9FE0', teal: '#00C2A8',
-  warn: '#F0A500', danger: '#E05C5C', muted: '#4A6070',
-  text: '#E8EFF6', border: 'rgba(255,255,255,0.06)',
-  blueMuted: 'rgba(0,120,200,0.18)', tealMuted: 'rgba(0,194,168,0.18)',
-  warnMuted: 'rgba(240,165,0,0.18)', dangerMuted: 'rgba(224,92,92,0.18)',
-};
+// ── HELPERS ──
+const avg = (a, k) => { const v=a.filter(d=>d[k]!=null).map(d=>d[k]); return v.length? v.reduce((x,y)=>x+y,0)/v.length :0; };
+const cnt = (a,k,v) => a.filter(d=>d[k]===v).length;
+const freq = (a,k) => { const m={}; a.forEach(d=>{const v=d[k]; m[v]=(m[v]||0)+1;}); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };
+const fmtH = h => h==null?'—':`${h.toFixed(2)}h`;
+const fmtDate = ts => { if(!ts) return '—'; const d=new Date(ts); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`; };
+const mesLabel = m => m==='2026-06'?'Jun/26':m==='2026-07'?'Jul/26':m;
 
-Chart.defaults.color = '#7A93AD';
-Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
-Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+// ── CHART DEFAULTS ──
+Chart.defaults.color = '#7B8BB5';
+Chart.defaults.borderColor = 'rgba(177,177,255,0.07)';
+Chart.defaults.font.family = "'Outfit', system-ui, sans-serif";
 Chart.defaults.font.size = 11;
 
-function count(arr, key, val) { return arr.filter(d => d[key] === val).length; }
-function avg(arr, key) { const v = arr.filter(d => d[key] != null).map(d => d[key]); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : 0; }
-function max(arr, key) { return Math.max(...arr.map(d => d[key] || 0)); }
+const TT = {
+  backgroundColor:'#0F1628', borderColor:'rgba(177,177,255,0.2)', borderWidth:1,
+  padding:10, cornerRadius:8, titleFont:{size:11,weight:'700'},
+  bodyFont:{size:11}, titleColor:'#E4EAFF', bodyColor:'#7B8BB5',
+};
+const SCALES = {
+  x:{grid:{color:'rgba(177,177,255,0.05)'},ticks:{font:{size:10}}},
+  y:{grid:{color:'rgba(177,177,255,0.05)'},ticks:{font:{size:10}}}
+};
 
-function buildKpis() {
-  const d = filtered;
-  const total = d.length;
-  const seRes = count(d,'resolvido_se','Sim');
-  const n3 = count(d,'escalonado_n3','Sim');
-  const jiras = d.filter(x=>x.tem_jira).length;
-  const slaM = avg(d,'sla_h');
-  const tM = avg(d,'tempo_total_h');
-  const taxaSe = total ? (seRes/total*100) : 0;
-  const taxaN3 = total ? (n3/total*100) : 0;
-
-  const grid = document.getElementById('kpiGrid');
-  grid.innerHTML = `
-    <div class="kpi-card accent">
-      <div class="kpi-header"><span class="kpi-label">Total de Cards</span><span class="kpi-icon">📋</span></div>
-      <div class="kpi-value blue">${total}</div>
-      <div class="kpi-footer"><span class="neutral">Junho 2026 · Todos os canais</span></div>
-    </div>
-    <div class="kpi-card success">
-      <div class="kpi-header"><span class="kpi-label">Resolvidos pelo SE</span><span class="kpi-icon">✅</span></div>
-      <div class="kpi-value green">${seRes}</div>
-      <div class="kpi-footer"><strong>${taxaSe.toFixed(0)}%</strong> de resolução direta</div>
-    </div>
-    <div class="kpi-card warn">
-      <div class="kpi-header"><span class="kpi-label">Escalonados para N3</span><span class="kpi-icon">↑</span></div>
-      <div class="kpi-value ${n3>0?'warn':''}">${n3}</div>
-      <div class="kpi-footer">${n3>0?`<span style="color:var(--warn)">${taxaN3.toFixed(0)}% do volume</span>`:'<strong>0%</strong> de escalonamento'}</div>
-    </div>
-    <div class="kpi-card neutral">
-      <div class="kpi-header"><span class="kpi-label">Jiras Abertos</span><span class="kpi-icon">🔗</span></div>
-      <div class="kpi-value">${jiras}</div>
-      <div class="kpi-footer"><span class="neutral">${total ? (jiras/total*100).toFixed(0) : 0}% dos atendimentos</span></div>
-    </div>
-    <div class="kpi-card accent">
-      <div class="kpi-header"><span class="kpi-label">SLA Médio 1ª Resposta</span><span class="kpi-icon">⚡</span></div>
-      <div class="kpi-value ${slaM<=4?'green':'warn'}">${slaM.toFixed(1)}<span style="font-size:14px;font-weight:400;color:var(--text-muted)">h</span></div>
-      <div class="kpi-footer">${slaM<=4?'<strong>Dentro do SLA</strong>':'<span style="color:var(--warn)">Acima de 4h</span>'}</div>
-    </div>
-    <div class="kpi-card neutral">
-      <div class="kpi-header"><span class="kpi-label">Tempo Médio Total</span><span class="kpi-icon">◷</span></div>
-      <div class="kpi-value">${tM.toFixed(1)}<span style="font-size:14px;font-weight:400;color:var(--text-muted)">h</span></div>
-      <div class="kpi-footer"><span class="neutral">Da abertura à última resposta</span></div>
-    </div>
-    <div class="kpi-card success">
-      <div class="kpi-header"><span class="kpi-label">Taxa Resolução Própria</span><span class="kpi-icon">◉</span></div>
-      <div class="kpi-value green">${taxaSe.toFixed(0)}<span style="font-size:14px;font-weight:400;color:var(--text-muted)">%</span></div>
-      <div class="kpi-footer"><strong>Sem dependência</strong> de N3</div>
-    </div>
-    <div class="kpi-card neutral">
-      <div class="kpi-header"><span class="kpi-label">Taxa de Escalonamento</span><span class="kpi-icon">△</span></div>
-      <div class="kpi-value">${taxaN3.toFixed(0)}<span style="font-size:14px;font-weight:400;color:var(--text-muted)">%</span></div>
-      <div class="kpi-footer"><span class="neutral">${n3===0?'Nenhum escalonamento no período':'Cards encaminhados para N3'}</span></div>
-    </div>
-  `;
-  document.getElementById('filteredCount').textContent = `${total} cards exibidos`;
-  document.getElementById('totalBadge').textContent = `${total} cards`;
-}
-
-function freq(arr, key) {
-  const m = {};
-  arr.forEach(d => { const v = d[key]; m[v] = (m[v]||0)+1; });
-  return Object.entries(m).sort((a,b)=>b[1]-a[1]);
-}
-
-function makeChart(id, type, labels, data, opts={}) {
-  if (charts[id]) { charts[id].destroy(); }
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  charts[id] = new Chart(ctx, {
+function mkChart(id,type,labels,data,opts={}) {
+  if(charts[id]) charts[id].destroy();
+  const el = document.getElementById(id);
+  if(!el) return;
+  charts[id] = new Chart(el, {
     type,
-    data: { labels, datasets: [{ data, ...opts }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: opts.legend ?? false, position: 'bottom', labels: { boxWidth: 10, padding: 14 } }, tooltip: { ...tooltipStyle() } },
-      scales: type === 'bar' ? barScales() : undefined,
+    data:{labels, datasets:[{data, ...opts}]},
+    options:{
+      responsive:true, maintainAspectRatio:false, animation:{duration:400},
+      plugins:{
+        legend:{display:opts.legend??false, position:'bottom', labels:{boxWidth:9,padding:14,font:{size:11}}},
+        tooltip:{...TT, callbacks:opts.ttCb||{}}
+      },
+      scales: type==='bar'||type==='line'? SCALES : undefined,
     }
   });
 }
 
-function tooltipStyle() {
-  return {
-    backgroundColor: '#1C2B3A', borderColor: 'rgba(0,120,200,0.3)', borderWidth: 1,
-    padding: 10, cornerRadius: 6, titleFont: { size: 11, weight: '600' }, bodyFont: { size: 11 },
-    titleColor: '#E8EFF6', bodyColor: '#7A93AD',
-  };
-}
-function barScales() {
-  return {
-    x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 } } },
-    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 } } }
-  };
+// ── MONTH TABS ──
+function setMes(mes) {
+  curMes = mes;
+  document.querySelectorAll('.month-tab').forEach(t=>t.classList.remove('active'));
+  const tabId = mes==='all'?'tab-all':`tab-${mes}`;
+  const el = document.getElementById(tabId);
+  if(el) el.classList.add('active');
+  applyFilters();
 }
 
-function buildCharts() {
-  const d = filtered;
-  // Categoria
-  const catF = freq(d, 'categoria');
-  const catColors = catF.map(([k]) => k==='Bug'?C.danger:k==='Usabilidade'?C.blue:k==='Performance'?C.warn:C.teal);
-  makeChart('chartCategoria','bar', catF.map(x=>x[0]), catF.map(x=>x[1]), {
-    backgroundColor: catColors, borderRadius: 6, borderSkipped: false, legend: false
-  });
-  // Status
-  const statF = freq(d, 'status');
-  const statColors = statF.map(([k]) => k==='Encerrado'?C.teal:k==='Aguardando cliente'?C.warn:C.blue);
-  makeChart('chartStatus','doughnut', statF.map(x=>x[0]), statF.map(x=>x[1]), {
-    backgroundColor: statColors, borderWidth: 0, legend: true
-  });
-  // Tipo
-  const tipoF = freq(d, 'tipo');
-  makeChart('chartTipo','doughnut', tipoF.map(x=>x[0]), tipoF.map(x=>x[1]), {
-    backgroundColor: [C.danger, C.blue, C.teal, C.warn, '#8B5CF6', '#EC4899'], borderWidth: 0, legend: true
-  });
-  // Motivo
-  const motF = freq(d, 'motivo').slice(0,6);
-  makeChart('chartMotivo','bar', motF.map(x=>x[0].replace(/-/g,' ')), motF.map(x=>x[1]), {
-    backgroundColor: C.blueMuted, borderColor: C.blue, borderWidth: 1, borderRadius: 4, legend: false
+function updateMonthCounts() {
+  const months = ['2026-06','2026-07'];
+  months.forEach(m => {
+    const el = document.getElementById(`cnt-${m}`);
+    if(el) el.textContent = RAW.filter(d=>d.mes===m).length;
   });
 }
 
-function buildTable() {
-  const d = filtered;
-  document.getElementById('tableCount').textContent = `${d.length} registros`;
-  const catBadge = cat => {
-    const m = {Bug:'badge-cat-bug',Usabilidade:'badge-cat-usab',Performance:'badge-cat-perf'};
-    return `<span class="badge ${m[cat]||'badge-cat-default'}">${cat}</span>`;
-  };
-  const stBadge = s => {
-    const m = {Encerrado:'badge-status-enc','Aguardando cliente':'badge-status-ag'};
-    return `<span class="badge ${m[s]||'badge-status-open'}">${s}</span>`;
-  };
-  const yn = (v, trueClass='badge-sim') => v==='Sim'?`<span class="badge ${trueClass}">Sim</span>`:`<span class="badge badge-nao">Não</span>`;
-  const fmt = ts => { const d=new Date(ts); return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}`; };
-  document.getElementById('cardsBody').innerHTML = d.map(r => `
-    <tr>
-      <td class="td-id">${r.id}</td>
-      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.assunto}">${r.assunto}</td>
-      <td>${catBadge(r.categoria)}</td>
-      <td>${stBadge(r.status)}</td>
-      <td><span style="font-size:11px;color:var(--text-muted)">${r.tipo}</span></td>
-      <td>${yn(r.tem_jira?'Sim':'Não')}</td>
-      <td>${yn(r.escalonado_n3)}</td>
-      <td>${r.recorrente==='Sim'?`<span class="badge badge-rec">Sim</span>`:`<span class="badge badge-nao">Não</span>`}</td>
-      <td>
-        <div class="sla-bar">
-          <div class="sla-track"><div class="sla-fill" style="width:${Math.min(100,r.sla_h/8*100)}%;background:${r.sla_h<=4?'var(--success)':'var(--warn)'}"></div></div>
-          <span class="sla-val">${r.sla_h.toFixed(1)}h</span>
-        </div>
-      </td>
-      <td style="color:var(--text-muted);font-size:11px">${fmt(r.abertura)}/Jun</td>
-    </tr>
-  `).join('');
+// ── FILTERS ──
+function toggleTag(btnId, key) {
+  tags[key] = !tags[key];
+  document.getElementById(btnId).classList.toggle('on', tags[key]);
+  applyFilters();
 }
-
-function buildSla() {
-  const d = filtered;
-  const slaAvg = avg(d,'sla_h');
-  const tAvg = avg(d,'tempo_total_h');
-  const slaCump = count(d,'sla_cumprido','Sim');
-  const slaMax = max(d,'sla_h');
-
-  document.getElementById('slaKpis').innerHTML = `
-    <div class="kpi-card accent">
-      <div class="kpi-header"><span class="kpi-label">SLA Médio 1ª Resp.</span></div>
-      <div class="kpi-value ${slaAvg<=4?'green':'warn'}">${slaAvg.toFixed(2)}<span style="font-size:14px;color:var(--text-muted)">h</span></div>
-      <div class="kpi-footer">${slaAvg<=4?'<strong>Meta atingida (≤4h)</strong>':'<span style="color:var(--warn)">Acima da meta</span>'}</div>
-    </div>
-    <div class="kpi-card success">
-      <div class="kpi-header"><span class="kpi-label">SLAs Cumpridos</span></div>
-      <div class="kpi-value green">${slaCump}/${d.length}</div>
-      <div class="kpi-footer"><strong>${d.length?((slaCump/d.length)*100).toFixed(0):0}%</strong> de conformidade</div>
-    </div>
-    <div class="kpi-card neutral">
-      <div class="kpi-header"><span class="kpi-label">Tempo Médio Total</span></div>
-      <div class="kpi-value">${tAvg.toFixed(1)}<span style="font-size:14px;color:var(--text-muted)">h</span></div>
-      <div class="kpi-footer"><span class="neutral">Abertura → última resposta</span></div>
-    </div>
-    <div class="kpi-card neutral">
-      <div class="kpi-header"><span class="kpi-label">Maior SLA (pior caso)</span></div>
-      <div class="kpi-value ${slaMax>4?'warn':''}">${slaMax.toFixed(1)}<span style="font-size:14px;color:var(--text-muted)">h</span></div>
-      <div class="kpi-footer"><span class="neutral">Caso mais demorado</span></div>
-    </div>
-  `;
-  // SLA bar chart
-  const labels = d.map(x=>x.id.replace('CXATEND-','#'));
-  const slaData = d.map(x=>x.sla_h);
-  const tData = d.map(x=>x.tempo_total_h);
-  const slaColors = slaData.map(v=>v<=4?C.teal:C.warn);
-  const tColors = tData.map(v=>v<=24?C.blueMuted:C.warnMuted);
-
-  if(charts['chartSlaBar']) charts['chartSlaBar'].destroy();
-  const ctx1 = document.getElementById('chartSlaBar');
-  if(ctx1) charts['chartSlaBar'] = new Chart(ctx1, {
-    type:'bar', data:{labels, datasets:[{data:slaData,backgroundColor:slaColors,borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tooltipStyle(),callbacks:{label:c=>`${c.raw.toFixed(2)}h`}}},scales:{...barScales(),y:{...barScales().y,title:{display:true,text:'horas',color:'#4A6070',font:{size:10}}}}}
-  });
-
-  if(charts['chartTempoBar']) charts['chartTempoBar'].destroy();
-  const ctx2 = document.getElementById('chartTempoBar');
-  if(ctx2) charts['chartTempoBar'] = new Chart(ctx2, {
-    type:'bar', data:{labels, datasets:[{data:tData,backgroundColor:C.blueMuted,borderColor:C.blue,borderWidth:1,borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tooltipStyle(),callbacks:{label:c=>`${c.raw.toFixed(2)}h`}}},scales:{...barScales(),y:{...barScales().y,title:{display:true,text:'horas',color:'#4A6070',font:{size:10}}}}}
-  });
-
-  // Detail rows
-  const slaMaxAll = Math.max(...d.map(x=>x.sla_h), ...d.map(x=>x.tempo_total_h));
-  document.getElementById('slaDetail').innerHTML = `
-    <div style="padding:0 24px 16px;display:flex;flex-direction:column;gap:12px">
-      ${d.map(r=>`
-        <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:11px;color:var(--text-muted);font-family:monospace">${r.id}</span>
-            <span style="font-size:10px;color:var(--text-dim)">${r.assunto.slice(0,40)}${r.assunto.length>40?'…':''}</span>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <span style="font-size:10px;color:var(--text-dim);width:80px">1ª Resposta</span>
-            <div class="sla-track" style="flex:1"><div class="sla-fill" style="width:${(r.sla_h/slaMaxAll*100).toFixed(1)}%;background:${r.sla_h<=4?'var(--success)':'var(--warn)'}"></div></div>
-            <span class="sla-val">${r.sla_h.toFixed(2)}h</span>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
-            <span style="font-size:10px;color:var(--text-dim);width:80px">Tempo Total</span>
-            <div class="sla-track" style="flex:1"><div class="sla-fill" style="width:${(r.tempo_total_h/slaMaxAll*100).toFixed(1)}%;background:var(--blue-light);opacity:.7"></div></div>
-            <span class="sla-val">${r.tempo_total_h.toFixed(2)}h</span>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
-function buildInsights() {
-  const d = filtered;
-  const total = d.length;
-  const rec = count(d,'recorrente','Sim');
-  const indev = count(d,'indevido','Sim');
-  const comApoio = d.filter(x=>x.apoio).length;
-  const bugCount = count(d,'categoria','Bug');
-
-  document.getElementById('insightsGrid').innerHTML = `
-    <div class="insight-card">
-      <div class="insight-icon green">✅</div>
-      <div class="insight-body">
-        <div class="insight-title">Alta taxa de resolução própria</div>
-        <div class="insight-text">100% dos cards do período foram resolvidos diretamente pelo Support Engineer, sem necessidade de escalonamento formal para N3. Demonstra autonomia técnica e domínio do produto.</div>
-      </div>
-    </div>
-    <div class="insight-card">
-      <div class="insight-icon blue">🐛</div>
-      <div class="insight-body">
-        <div class="insight-title">Bugs concentram ${bugCount} de ${total} cards</div>
-        <div class="insight-text">A categoria Bug representa ${total?(bugCount/total*100).toFixed(0):0}% do volume. Módulo de cadastro de pacientes aparece em 2 cards distintos, indicando possível problema sistêmico não resolvido na raiz.</div>
-      </div>
-    </div>
-    ${rec>0?`<div class="insight-card">
-      <div class="insight-icon warn">🔄</div>
-      <div class="insight-body">
-        <div class="insight-title">${rec} card(s) marcado(s) como recorrente</div>
-        <div class="insight-text">CXATEND-4938 (Personalização receituário) é recorrente, sugerindo que a causa raiz não foi endereçada. Candidato à abertura de melhoria de produto ou documentação específica para o parceiro.</div>
-      </div>
-    </div>`:''}
-    ${indev>0?`<div class="insight-card">
-      <div class="insight-icon red">⚠️</div>
-      <div class="insight-body">
-        <div class="insight-title">${indev} card(s) classificado(s) como indevido</div>
-        <div class="insight-text">CXATEND-4939 foi tratado mas classificado como indevido. Indica possível ruído no triagem inicial ou ausência de documentação que orientaria o cliente antes de abrir o card.</div>
-      </div>
-    </div>`:''}
-    <div class="insight-card">
-      <div class="insight-icon blue">📄</div>
-      <div class="insight-body">
-        <div class="insight-title">Oportunidade de documentação</div>
-        <div class="insight-text">Cadastro de pacientes, personalização de documentos e exibição de histórico com filtros são temas recorrentes que poderiam ser cobertos por artigos na base de conhecimento ou FAQs.</div>
-      </div>
-    </div>
-    <div class="insight-card">
-      <div class="insight-icon warn">⏱️</div>
-      <div class="insight-body">
-        <div class="insight-title">CXATEND-4938 com tempo total elevado</div>
-        <div class="insight-text">Card de personalização de receituário acumula 47h de tempo aberto (Aguardando cliente). Monitorar para evitar que ultrapasse SLA de encerramento. Considerar follow-up ativo.</div>
-      </div>
-    </div>
-  `;
-
-  // Apoio Detail
-  const apoioMap = {};
-  d.forEach(x => { if(x.apoio) apoioMap[x.apoio] = (apoioMap[x.apoio]||0)+1; });
-  const apoioEntries = Object.entries(apoioMap);
-  document.getElementById('apoioDetail').innerHTML = apoioEntries.length ? `
-    <div style="padding:0 24px;display:flex;flex-direction:column;gap:10px">
-      ${apoioEntries.map(([k,v])=>`
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:12px;color:var(--text-muted)">${k}</span>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div class="sla-track" style="width:80px"><div class="sla-fill" style="width:${v/total*100}%;background:var(--blue)"></div></div>
-            <span style="font-size:12px;font-weight:600;color:var(--text)">${v} card${v>1?'s':''}</span>
-          </div>
-        </div>
-      `).join('')}
-      <div style="margin-top:4px;font-size:11px;color:var(--text-dim)">${total-comApoio} de ${total} cards resolvidos sem apoio externo (${total?(((total-comApoio)/total)*100).toFixed(0):0}%)</div>
-    </div>
-  ` : `<div style="padding:16px 24px;font-size:12px;color:var(--text-dim)">Nenhum apoio de time externo registrado no período filtrado.</div>`;
-
-  // Qualidade
-  document.getElementById('qualidadeDetail').innerHTML = `
-    <div style="padding:0 24px;display:flex;flex-direction:column;gap:12px">
-      ${[
-        ['Recorrentes', rec, total, C.warn, 'Mesmo problema ocorreu antes'],
-        ['Indevidos', indev, total, C.danger, 'Cards que poderiam ser evitados'],
-        ['Resolvidos pelo SE', count(d,'resolvido_se','Sim'), total, C.teal, 'Resolução sem escalonamento'],
-        ['Com Jira vinculado', d.filter(x=>x.tem_jira).length, total, C.blue, 'Geraram demanda de desenvolvimento'],
-      ].map(([label,val,tot,color,desc])=>`
-        <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-            <span style="font-size:12px;color:var(--text-muted)">${label}</span>
-            <span style="font-size:12px;font-weight:600;color:var(--text)">${val} <span style="color:var(--text-dim);font-weight:400">(${tot?(val/tot*100).toFixed(0):0}%)</span></span>
-          </div>
-          <div class="sla-track"><div class="sla-fill" style="width:${tot?(val/tot*100):0}%;background:${color}"></div></div>
-          <div style="font-size:10px;color:var(--text-dim);margin-top:3px">${desc}</div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
-function buildExec() {
-  const d = filtered;
-  const total = d.length;
-  const seRes = count(d,'resolvido_se','Sim');
-  const slaM = avg(d,'sla_h');
-  const taxaSe = total ? (seRes/total*100).toFixed(0) : 0;
-
-  document.getElementById('execKpis').innerHTML = `
-    <div class="exec-kpi"><div class="exec-kpi-val blue">${total}</div><div class="exec-kpi-label">Cards</div></div>
-    <div class="exec-kpi"><div class="exec-kpi-val green">${taxaSe}%</div><div class="exec-kpi-label">Resolução SE</div></div>
-    <div class="exec-kpi"><div class="exec-kpi-val">${slaM.toFixed(1)}h</div><div class="exec-kpi-label">SLA Médio</div></div>
-  `;
-  document.getElementById('execNarrative').innerHTML = `
-    <p>No período de <strong>junho de 2026</strong>, o Support Engineer Chris realizou o atendimento de <strong>${total} cards</strong> provenientes do board de CX. A taxa de resolução direta foi de <strong>${taxaSe}%</strong>, sem nenhum escalonamento formal para N3, evidenciando autonomia técnica e domínio do produto.</p>
-    <p>O SLA médio de primeira resposta foi de <strong>${slaM.toFixed(2)} horas</strong>, dentro da meta estabelecida de 4 horas. A principal categoria de atendimento foi <strong>Bug (${count(d,'categoria','Bug')} cards)</strong>, com destaque para problemas no módulo de cadastro de pacientes, que gerou 2 atendimentos distintos no período.</p>
-  `;
-
-  document.getElementById('execGrid').innerHTML = `
-    <div class="exec-block">
-      <div class="exec-block-title">Principais Números</div>
-      <ul class="exec-list">
-        <li><strong>${total} cards</strong> atendidos em junho de 2026</li>
-        <li><strong>100% de resolução</strong> realizada pelo Support Engineer</li>
-        <li><strong>0 escalonamentos</strong> para N3 no período</li>
-        <li><strong>SLA médio de ${slaM.toFixed(2)}h</strong> para primeira resposta</li>
-        <li><strong>1 Jira</strong> aberto para acompanhamento de desenvolvimento</li>
-        <li><strong>5 cards</strong> aguardando retorno do cliente</li>
-      </ul>
-    </div>
-    <div class="exec-block">
-      <div class="exec-block-title">Principais Temas</div>
-      <ul class="exec-list">
-        <li><strong>Erro no cadastro de paciente</strong> (2 ocorrências — possível problema sistêmico)</li>
-        <li><strong>Personalização de receituário</strong> (recorrente — causa raiz pendente)</li>
-        <li><strong>Visualização de histórico com filtros</strong> (classificado como indevido)</li>
-        <li><strong>Atestado desconfigurado</strong> (dúvida de usabilidade)</li>
-        <li><strong>Falha na visualização de modelos</strong> (Jira aberto)</li>
-      </ul>
-    </div>
-    <div class="exec-block">
-      <div class="exec-block-title">Pontos de Atenção</div>
-      <ul class="exec-list">
-        <li><strong>Cadastro de pacientes</strong> com 2 bugs distintos — investigar causa raiz comum</li>
-        <li><strong>CXATEND-4938</strong> aguarda cliente há mais de 47h — risco de SLA de encerramento</li>
-        <li><strong>1 card indevido</strong> no período — oportunidade de autoatendimento ou FAQ</li>
-        <li><strong>Personalização receituário</strong> é recorrente — necessita correção definitiva</li>
-      </ul>
-    </div>
-    <div class="exec-block">
-      <div class="exec-block-title">Destaques Positivos</div>
-      <ul class="exec-list">
-        <li><strong>100% de SLA</strong> de primeira resposta cumprido</li>
-        <li><strong>Nenhum escalonamento</strong> — total autonomia técnica</li>
-        <li><strong>Tempo médio de resposta de ${slaM.toFixed(2)}h</strong> — eficiência acima da meta</li>
-        <li><strong>Apoio ao N3 Backend</strong> em 2 cards de bug sem necessidade de escalonamento</li>
-      </ul>
-    </div>
-    <div class="exec-block">
-      <div class="exec-block-title">Recomendações</div>
-      <ul class="exec-list">
-        <li>Criar artigo na base de conhecimento sobre <strong>cadastro de pacientes</strong> — tema de maior volume</li>
-        <li>Investigar <strong>causa raiz do bug de cadastro</strong> junto ao time de Backend</li>
-        <li>Realizar <strong>follow-up ativo no CXATEND-4938</strong> (47h sem retorno do cliente)</li>
-        <li>Revisar triagem de cards para <strong>reduzir atendimentos indevidos</strong></li>
-        <li>Documentar solução para <strong>personalização de receituário</strong> para evitar recorrência</li>
-      </ul>
-    </div>
-    <div class="exec-block">
-      <div class="exec-block-title">Oportunidades Identificadas</div>
-      <ul class="exec-list">
-        <li><strong>FAQ de Usabilidade</strong> para reduzir dúvidas sobre impressão e configuração de documentos</li>
-        <li><strong>Automação de triagem</strong> para cards indevidos — possível regra de roteamento automático</li>
-        <li><strong>Alerta de SLA de encerramento</strong> para cards em "Aguardando cliente" há mais de 24h</li>
-        <li><strong>Dashboard de bugs por módulo</strong> para identificar áreas problemáticas sistematicamente</li>
-      </ul>
-    </div>
-  `;
-}
-
-function populateFilters() {
-  const cats = [...new Set(RAW.map(d=>d.categoria))];
-  const stats = [...new Set(RAW.map(d=>d.status))];
-  const tipos = [...new Set(RAW.map(d=>d.tipo))];
-  const sel = (id, opts) => {
-    const el = document.getElementById(id);
-    opts.forEach(o => { const opt = document.createElement('option'); opt.value=o; opt.textContent=o; el.appendChild(opt); });
-  };
-  sel('filterCategoria', cats);
-  sel('filterStatus', stats);
-  sel('filterTipo', tipos);
+function resetAll() {
+  curMes='all'; tags={jira:false,n3:false,rec:false,indev:false};
+  document.getElementById('fCat').value='';
+  document.getElementById('fStatus').value='';
+  document.getElementById('fTipo').value='';
+  ['fJira','fN3','fRec','fIndev'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.querySelectorAll('.month-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-all').classList.add('active');
+  applyFilters();
 }
 
 function applyFilters() {
-  const cat = document.getElementById('filterCategoria').value;
-  const stat = document.getElementById('filterStatus').value;
-  const tipo = document.getElementById('filterTipo').value;
-  filtered = RAW.filter(d => {
-    if (cat && d.categoria !== cat) return false;
-    if (stat && d.status !== stat) return false;
-    if (tipo && d.tipo !== tipo) return false;
-    if (activeFilters.jira && !d.tem_jira) return false;
-    if (activeFilters.n3 && d.escalonado_n3 !== 'Sim') return false;
-    if (activeFilters.rec && d.recorrente !== 'Sim') return false;
-    if (activeFilters.indev && d.indevido !== 'Sim') return false;
+  const cat = document.getElementById('fCat').value;
+  const stat = document.getElementById('fStatus').value;
+  const tipo = document.getElementById('fTipo').value;
+  filtered = RAW.filter(d=>{
+    if(curMes!=='all' && d.mes!==curMes) return false;
+    if(cat && d.categoria!==cat) return false;
+    if(stat && d.status!==stat) return false;
+    if(tipo && d.tipo!==tipo) return false;
+    if(tags.jira && !d.tem_jira) return false;
+    if(tags.n3 && d.escalonado_n3!=='Sim') return false;
+    if(tags.rec && d.recorrente!=='Sim') return false;
+    if(tags.indev && d.indevido!=='Sim') return false;
     return true;
   });
   rebuildAll();
 }
 
-function toggleFilter(key) {
-  activeFilters[key] = !activeFilters[key];
-  document.getElementById('btn'+key.charAt(0).toUpperCase()+key.slice(1)).classList.toggle('active', activeFilters[key]);
-  applyFilters();
+function populateFilters() {
+  const fill = (id, vals) => {
+    const el=document.getElementById(id);
+    vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});
+  };
+  fill('fCat', [...new Set(RAW.map(d=>d.categoria))]);
+  fill('fStatus', [...new Set(RAW.map(d=>d.status))]);
+  fill('fTipo', [...new Set(RAW.map(d=>d.tipo))]);
 }
 
-function resetFilters() {
-  document.getElementById('filterCategoria').value='';
-  document.getElementById('filterStatus').value='';
-  document.getElementById('filterTipo').value='';
-  Object.keys(activeFilters).forEach(k=>activeFilters[k]=false);
-  ['Jira','N3','Rec','Indev'].forEach(k=>document.getElementById('btn'+k).classList.remove('active'));
-  filtered = [...RAW];
-  rebuildAll();
-}
-
-function rebuildAll() {
-  buildKpis();
-  buildCharts();
-  buildTable();
-  buildSla();
-  buildInsights();
-  buildExec();
-}
-
-const sectionTitles = {
-  overview:'Visão Geral',cards:'Cards',sla:'SLA & Tempo',insights:'Insights',exec:'Resumo Executivo'
+// ── BADGE HELPERS ──
+const catChip = cat => {
+  const m={Bug:'chip-d',Usabilidade:'chip-v',Performance:'chip-w',Autenticação:'chip-b'};
+  return `<span class="chip ${m[cat]||'chip-muted'}">${cat}</span>`;
 };
-function showSection(id) {
+const stChip = s => {
+  const m={Encerrado:'chip-t','Aguardando cliente':'chip-w','Em andamento':'chip-v'};
+  return `<span class="chip ${m[s]||'chip-muted'}">${s}</span>`;
+};
+const yn = (v,on='chip-t',off='chip-muted') => v==='Sim'?`<span class="chip ${on}">Sim</span>`:`<span class="chip ${off}">—</span>`;
+
+// ── REBUILD ──
+function rebuildAll() {
+  const d = filtered;
+  document.getElementById('countPill').textContent = `${d.length} card${d.length!==1?'s':''}`;
+  buildKpis(d);
+  buildOverviewCharts(d);
+  buildMensalSection(d);
+  buildTable(d);
+  buildSla(d);
+  buildInsights(d);
+  buildExec(d);
+}
+
+// ── KPIs ──
+function buildKpis(d) {
+  const total = d.length;
+  const seR = cnt(d,'resolvido_se','Sim');
+  const n3 = cnt(d,'escalonado_n3','Sim');
+  const jiras = d.filter(x=>x.tem_jira).length;
+  const slaM = avg(d,'sla_h');
+  const tM = avg(d,'tempo_total_h');
+  const pSe = total?(seR/total*100).toFixed(0):0;
+  const pN3 = total?(n3/total*100).toFixed(0):0;
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi v"><div class="kpi-glow"></div>
+      <div class="kpi-label">Total de Cards</div>
+      <div class="kpi-val">${total}</div>
+      <div class="kpi-foot"><span class="hi">Junho 2026</span> · todos os canais</div>
+    </div>
+    <div class="kpi t"><div class="kpi-glow"></div>
+      <div class="kpi-label">Resolvidos pelo SE</div>
+      <div class="kpi-val">${seR}</div>
+      <div class="kpi-foot"><strong>${pSe}%</strong> de resolução direta</div>
+    </div>
+    <div class="kpi w"><div class="kpi-glow"></div>
+      <div class="kpi-label">Escalonados para N3</div>
+      <div class="kpi-val">${n3}</div>
+      <div class="kpi-foot ${n3>0?'wu':''}"> ${n3>0?`${pN3}% do volume`:'<strong>Zero</strong> escalonamentos'}</div>
+    </div>
+    <div class="kpi b"><div class="kpi-glow"></div>
+      <div class="kpi-label">Jiras Vinculados</div>
+      <div class="kpi-val">${jiras}</div>
+      <div class="kpi-foot">${total?(jiras/total*100).toFixed(0):0}% dos atendimentos</div>
+    </div>
+    <div class="kpi t"><div class="kpi-glow"></div>
+      <div class="kpi-label">SLA Médio 1ª Resp.</div>
+      <div class="kpi-val">${slaM.toFixed(1)}<span>h</span></div>
+      <div class="kpi-foot">${slaM<=4?'<strong>Dentro da meta ≤4h</strong>':'<span class="wu">Acima de 4h</span>'}</div>
+    </div>
+    <div class="kpi v"><div class="kpi-glow"></div>
+      <div class="kpi-label">Tempo Médio Total</div>
+      <div class="kpi-val">${tM.toFixed(1)}<span>h</span></div>
+      <div class="kpi-foot">Abertura → última resposta</div>
+    </div>
+    <div class="kpi t"><div class="kpi-glow"></div>
+      <div class="kpi-label">Taxa Resolução SE</div>
+      <div class="kpi-val">${pSe}<span>%</span></div>
+      <div class="kpi-foot"><strong>Autonomia completa</strong></div>
+    </div>
+    <div class="kpi b"><div class="kpi-glow"></div>
+      <div class="kpi-label">Taxa Escalonamento</div>
+      <div class="kpi-val">${pN3}<span>%</span></div>
+      <div class="kpi-foot">${n3===0?'Nenhum no período':'Cards para N3'}</div>
+    </div>
+  `;
+  document.getElementById('chipTotal').textContent = `${total} cards`;
+}
+
+// ── OVERVIEW CHARTS ──
+function buildOverviewCharts(d) {
+  const catF = freq(d,'categoria');
+  const catClr = catF.map(([k])=>k==='Bug'?'rgba(255,107,107,0.8)':k==='Usabilidade'?'rgba(177,177,255,0.8)':k==='Performance'?'rgba(255,174,66,0.8)':'rgba(78,127,255,0.8)');
+  mkChart('cCat','bar',catF.map(x=>x[0]),catF.map(x=>x[1]),{
+    backgroundColor:catClr, borderRadius:6, borderSkipped:false,
+    ttCb:{label:c=>`${c.raw} card${c.raw!==1?'s':''}`}
+  });
+
+  const stF = freq(d,'status');
+  mkChart('cStatus','doughnut',stF.map(x=>x[0]),stF.map(x=>x[1]),{
+    backgroundColor:['rgba(0,212,180,0.8)','rgba(255,174,66,0.8)','rgba(177,177,255,0.8)','rgba(78,127,255,0.8)'],
+    borderWidth:0, legend:true, hoverOffset:6
+  });
+
+  const tpF = freq(d,'tipo');
+  mkChart('cTipo','doughnut',tpF.map(x=>x[0]),tpF.map(x=>x[1]),{
+    backgroundColor:['rgba(255,107,107,0.8)','rgba(177,177,255,0.8)','rgba(0,212,180,0.8)','rgba(255,174,66,0.8)','rgba(78,127,255,0.8)'],
+    borderWidth:0, legend:true, hoverOffset:6
+  });
+
+  const motF = freq(d,'motivo').slice(0,6);
+  mkChart('cMotivo','bar',motF.map(x=>x[0].replace(/-/g,' ')),motF.map(x=>x[1]),{
+    backgroundColor:'rgba(177,177,255,0.15)',
+    borderColor:'rgba(177,177,255,0.5)', borderWidth:1, borderRadius:4
+  });
+}
+
+// ── MENSAL ──
+function buildMensalSection(d) {
+  const months = ['2026-06','2026-07'];
+  const mLabels = months.map(mesLabel);
+  const mCounts = months.map(m=>RAW.filter(x=>x.mes===m).length);
+  const mSla = months.map(m=>{
+    const v=RAW.filter(x=>x.mes===m&&x.sla_h!=null).map(x=>x.sla_h);
+    return v.length? (v.reduce((a,b)=>a+b,0)/v.length) :0;
+  });
+
+  mkChart('cMensal','bar',mLabels,mCounts,{
+    backgroundColor:['rgba(177,177,255,0.7)','rgba(78,127,255,0.4)'],
+    borderRadius:8, borderSkipped:false,
+    ttCb:{label:c=>`${c.raw} cards`}
+  });
+
+  mkChart('cSlaMensal','bar',mLabels,mSla,{
+    backgroundColor:['rgba(0,212,180,0.7)','rgba(0,212,180,0.3)'],
+    borderRadius:8, borderSkipped:false,
+    ttCb:{label:c=>`${c.raw.toFixed(2)}h`}
+  });
+
+  // Compare body
+  const junData = RAW.filter(x=>x.mes==='2026-06');
+  const julData = RAW.filter(x=>x.mes==='2026-07');
+
+  const compareBody = document.getElementById('compareBody');
+  const mkMonthSummary = (data, label) => {
+    if(!data.length) return `
+      <div>
+        <div class="compare-header"><span class="compare-month-label">${label}</span></div>
+        <div class="compare-empty">
+          <div class="ico">📭</div>
+          <p>Nenhum card registrado ainda.<br>Os dados aparecerão aqui assim que forem inseridos na planilha.</p>
+        </div>
+      </div>`;
+    const cats = freq(data,'categoria');
+    return `
+      <div>
+        <div class="compare-header">
+          <span class="compare-month-label">${label}</span>
+          <span class="compare-month-count">${data.length}</span>
+        </div>
+        <div class="metric-row" style="margin-top:14px">
+          ${cats.map(([k,v])=>`
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="metric-lbl">${k}</span>
+                <span class="metric-val">${v}<span class="metric-pct">(${(v/data.length*100).toFixed(0)}%)</span></span>
+              </div>
+              <div class="m-track"><div class="m-fill" style="width:${v/data.length*100}%;background:${k==='Bug'?'var(--danger)':k==='Usabilidade'?'var(--violet)':k==='Performance'?'var(--warn)':'var(--blue)'}"></div></div>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          ${[
+            ['SLA Médio',`${avg(data,'sla_h').toFixed(2)}h`],
+            ['Resolv. SE',`${cnt(data,'resolvido_se','Sim')}/${data.length}`],
+            ['Jiras',`${data.filter(x=>x.tem_jira).length}`],
+          ].map(([l,v])=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center"><div style="font-size:16px;font-weight:800;color:var(--violet)">${v}</div><div style="font-size:10px;color:var(--text-dim);margin-top:2px">${l}</div></div>`).join('')}
+        </div>
+      </div>
+    `;
+  };
+  compareBody.innerHTML = `<div class="compare-grid">${mkMonthSummary(junData,'Junho 2026')}${mkMonthSummary(julData,'Julho 2026')}</div>`;
+}
+
+// ── TABLE ──
+function buildTable(d) {
+  document.getElementById('tableSubtitle').textContent = `${d.length} registros exibidos`;
+  document.getElementById('tBody').innerHTML = d.map(r=>`
+    <tr>
+      <td class="td-mono">${r.id}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.assunto}">${r.assunto}</td>
+      <td>${catChip(r.categoria)}</td>
+      <td>${stChip(r.status)}</td>
+      <td class="td-sub">${r.tipo}</td>
+      <td>${yn(r.tem_jira?'Sim':'Não')}</td>
+      <td>${yn(r.escalonado_n3,'chip-w')}</td>
+      <td>${r.recorrente==='Sim'?`<span class="chip chip-w">Sim</span>`:`<span class="chip chip-muted">—</span>`}</td>
+      <td>
+        <div class="sla-row">
+          <div class="sla-track"><div class="sla-fill" style="width:${Math.min(100,r.sla_h/8*100)}%;background:${r.sla_h<=4?'var(--teal)':'var(--warn)'}"></div></div>
+          <span class="sla-num">${fmtH(r.sla_h)}</span>
+        </div>
+      </td>
+      <td class="td-sub">${mesLabel(r.mes)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── SLA ──
+function buildSla(d) {
+  const slaM = avg(d,'sla_h');
+  const tM   = avg(d,'tempo_total_h');
+  const slaCump = cnt(d,'sla_cumprido','Sim');
+  const slaMax = Math.max(...d.map(x=>x.sla_h||0));
+
+  document.getElementById('slaKpis').innerHTML = `
+    <div class="kpi t"><div class="kpi-glow"></div>
+      <div class="kpi-label">SLA Médio 1ª Resp.</div>
+      <div class="kpi-val">${slaM.toFixed(2)}<span>h</span></div>
+      <div class="kpi-foot">${slaM<=4?'<strong>Meta atingida</strong>':'<span class="wu">Acima da meta</span>'}</div>
+    </div>
+    <div class="kpi v"><div class="kpi-glow"></div>
+      <div class="kpi-label">SLAs Cumpridos</div>
+      <div class="kpi-val">${slaCump}<span>/${d.length}</span></div>
+      <div class="kpi-foot"><strong>${d.length?((slaCump/d.length)*100).toFixed(0):0}%</strong> de conformidade</div>
+    </div>
+    <div class="kpi b"><div class="kpi-glow"></div>
+      <div class="kpi-label">Tempo Médio Total</div>
+      <div class="kpi-val">${tM.toFixed(1)}<span>h</span></div>
+      <div class="kpi-foot">Da abertura à última resposta</div>
+    </div>
+    <div class="kpi w"><div class="kpi-glow"></div>
+      <div class="kpi-label">Pior Caso SLA</div>
+      <div class="kpi-val">${slaMax.toFixed(1)}<span>h</span></div>
+      <div class="kpi-foot">Card com maior tempo de resposta</div>
+    </div>
+  `;
+
+  const labels = d.map(x=>x.id.replace('CXATEND-','#'));
+  mkChart('cSlaBar','bar',labels,d.map(x=>x.sla_h),{
+    backgroundColor:d.map(x=>(x.sla_h||0)<=4?'rgba(0,212,180,0.7)':'rgba(255,174,66,0.7)'),
+    borderRadius:5, borderSkipped:false,
+    ttCb:{label:c=>`${c.raw.toFixed(2)}h`}
+  });
+  mkChart('cTempoBar','bar',labels,d.map(x=>x.tempo_total_h),{
+    backgroundColor:'rgba(177,177,255,0.2)',
+    borderColor:'rgba(177,177,255,0.5)', borderWidth:1, borderRadius:5,
+    ttCb:{label:c=>`${c.raw!=null?c.raw.toFixed(2):'—'}h`}
+  });
+
+  const mx = Math.max(...d.map(x=>Math.max(x.sla_h||0, x.tempo_total_h||0)));
+  document.getElementById('slaDetail').innerHTML = d.map(r=>`
+    <div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;align-items:center">
+        <span class="td-mono" style="font-size:11px">${r.id}</span>
+        <span style="font-size:11px;color:var(--text-dim);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.assunto}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+        <span style="font-size:10px;color:var(--text-dim);width:80px;flex-shrink:0">1ª Resposta</span>
+        <div class="sla-track" style="flex:1"><div class="sla-fill" style="width:${mx?(r.sla_h||0)/mx*100:0}%;background:${(r.sla_h||0)<=4?'var(--teal)':'var(--warn)'}"></div></div>
+        <span class="sla-num">${fmtH(r.sla_h)}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:10px;color:var(--text-dim);width:80px;flex-shrink:0">Tempo Total</span>
+        <div class="sla-track" style="flex:1"><div class="sla-fill" style="width:${mx&&r.tempo_total_h?r.tempo_total_h/mx*100:0}%;background:rgba(177,177,255,0.5)"></div></div>
+        <span class="sla-num">${fmtH(r.tempo_total_h)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── INSIGHTS ──
+function buildInsights(d) {
+  const total = d.length;
+  const rec = cnt(d,'recorrente','Sim');
+  const indev = cnt(d,'indevido','Sim');
+  const bugs = cnt(d,'categoria','Bug');
+  const n3 = cnt(d,'escalonado_n3','Sim');
+  const comApoio = d.filter(x=>x.apoio).length;
+
+  document.getElementById('iGrid').innerHTML = `
+    <div class="insight"><div class="insight-ico t">✅</div>
+      <div><div class="insight-title">Alta taxa de resolução própria</div>
+      <div class="insight-body">100% dos cards foram resolvidos pelo Support Engineer. Nenhum escalonamento formal para N3, demonstrando autonomia técnica e domínio completo do produto.</div></div>
+    </div>
+    <div class="insight"><div class="insight-ico d">🐛</div>
+      <div><div class="insight-title">Bugs concentram ${total?(bugs/total*100).toFixed(0):0}% do volume</div>
+      <div class="insight-body">Módulo de <strong>cadastro de pacientes</strong> gerou 2 cards distintos com mesmo motivo — sinal de causa raiz não resolvida. Histórico com filtros também apareceu 2 vezes.</div></div>
+    </div>
+    ${rec>0?`<div class="insight"><div class="insight-ico w">🔄</div>
+      <div><div class="insight-title">${rec} card${rec>1?'s':''} recorrente${rec>1?'s':''} identificado${rec>1?'s':''}</div>
+      <div class="insight-body">Personalização de receituário e erro de cadastro marcados como recorrentes. Indicam necessidade de correção definitiva ou documentação específica para o parceiro.</div></div>
+    </div>`:''}
+    ${indev>0?`<div class="insight"><div class="insight-ico w">⚠️</div>
+      <div><div class="insight-title">${indev} card${indev>1?'s':''} indevido${indev>1?'s':''} no período</div>
+      <div class="insight-body">Histórico com filtros classificado como indevido em 2 atendimentos. Oportunidade de criar FAQ ou autoatendimento para reduzir volume de tickets semelhantes.</div></div>
+    </div>`:''}
+    ${n3>0?`<div class="insight"><div class="insight-ico d">↑</div>
+      <div><div class="insight-title">${n3} escalonamento para N3</div>
+      <div class="insight-body">CXATEND-4961 (Autenticação Safe ID) foi escalado para N3 — recorrente, indica complexidade crescente no módulo de autenticação.</div></div>
+    </div>`:''}
+    <div class="insight"><div class="insight-ico v">📄</div>
+      <div><div class="insight-title">Oportunidade de documentação</div>
+      <div class="insight-body">Cadastro de pacientes, personalização de documentos e histórico com filtros são temas que poderiam ser cobertos por artigos na base de conhecimento ou FAQs para parceiros.</div></div>
+    </div>
+  `;
+
+  // Apoio
+  const apoioMap = {};
+  d.forEach(x=>{ if(x.apoio) apoioMap[x.apoio]=(apoioMap[x.apoio]||0)+1; });
+  const ae = Object.entries(apoioMap);
+  document.getElementById('apoioBody').innerHTML = ae.length ? `
+    <div class="metric-row">
+      ${ae.map(([k,v])=>`
+        <div class="metric-item">
+          <div class="metric-header">
+            <span class="metric-lbl">${k}</span>
+            <span class="metric-val">${v}<span class="metric-pct"> card${v>1?'s':''}</span></span>
+          </div>
+          <div class="m-track"><div class="m-fill" style="width:${v/total*100}%;background:var(--violet)"></div></div>
+          <div class="m-desc">${(v/total*100).toFixed(0)}% dos atendimentos envolveram este time</div>
+        </div>
+      `).join('')}
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px">${total-comApoio} de ${total} cards resolvidos sem apoio externo (${total?((total-comApoio)/total*100).toFixed(0):0}%)</div>
+    </div>
+  ` : `<div style="font-size:12px;color:var(--text-dim);padding:8px 0">Nenhum apoio externo registrado no filtro atual.</div>`;
+
+  // Qualidade
+  document.getElementById('qualBody').innerHTML = `
+    <div class="metric-row">
+      ${[
+        ['Resolvidos pelo SE', cnt(d,'resolvido_se','Sim'), total, 'var(--teal)', 'Resolução direta sem escalonamento'],
+        ['SLA Cumprido', cnt(d,'sla_cumprido','Sim'), total, 'var(--violet)', 'Primeira resposta dentro de 4h'],
+        ['Recorrentes', rec, total, 'var(--warn)', 'Problema já visto anteriormente'],
+        ['Indevidos', indev, total, 'var(--danger)', 'Poderiam ser evitados'],
+        ['Com Jira', d.filter(x=>x.tem_jira).length, total, 'var(--blue)', 'Geraram demanda de desenvolvimento'],
+      ].map(([l,v,t,c,desc])=>`
+        <div class="metric-item">
+          <div class="metric-header">
+            <span class="metric-lbl">${l}</span>
+            <span class="metric-val">${v}<span class="metric-pct"> (${t?(v/t*100).toFixed(0):0}%)</span></span>
+          </div>
+          <div class="m-track"><div class="m-fill" style="width:${t?(v/t*100):0}%;background:${c}"></div></div>
+          <div class="m-desc">${desc}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ── EXEC ──
+function buildExec(d) {
+  const total = d.length;
+  const seR = cnt(d,'resolvido_se','Sim');
+  const slaM = avg(d,'sla_h');
+  const pSe = total?(seR/total*100).toFixed(0):0;
+
+  document.getElementById('execKpis').innerHTML = `
+    <div class="exec-kpi"><div class="exec-kv">${total}</div><div class="exec-kl">Cards</div></div>
+    <div class="exec-kpi"><div class="exec-kv t">${pSe}%</div><div class="exec-kl">Resolução SE</div></div>
+    <div class="exec-kpi"><div class="exec-kv">${slaM.toFixed(1)}h</div><div class="exec-kl">SLA Médio</div></div>
+  `;
+
+  document.getElementById('execText').innerHTML = `
+    <p>No período de <strong>junho de 2026</strong>, o Support Engineer Chris atendeu <strong>${total} cards</strong> do board CX. A taxa de resolução direta foi de <strong>${pSe}%</strong> — sem dependência de N3 na grande maioria dos casos — evidenciando domínio técnico e autonomia operacional.</p>
+    <p>O SLA médio de primeira resposta foi <strong>${slaM.toFixed(2)} horas</strong>, dentro da meta de 4h. A categoria <strong>Bug (${cnt(d,'categoria','Bug')} cards)</strong> liderou o volume, com destaque para o módulo de cadastro de pacientes, que concentrou atendimentos repetidos.</p>
+  `;
+
+  document.getElementById('execGrid').innerHTML = `
+    <div class="exec-block"><div class="exec-bt">Principais Números</div>
+      <ul class="exec-list">
+        <li><strong>${total} cards</strong> atendidos em junho de 2026</li>
+        <li><strong>${pSe}% de resolução</strong> realizada pelo Support Engineer</li>
+        <li><strong>${cnt(d,'escalonado_n3','Sim')} escalonamento(s)</strong> para N3</li>
+        <li><strong>SLA médio de ${slaM.toFixed(2)}h</strong> para primeira resposta</li>
+        <li><strong>${d.filter(x=>x.tem_jira).length} Jira(s)</strong> abertos para desenvolvimento</li>
+        <li><strong>${cnt(d,'status','Aguardando cliente')} cards</strong> aguardando retorno do cliente</li>
+      </ul>
+    </div>
+    <div class="exec-block"><div class="exec-bt">Principais Temas</div>
+      <ul class="exec-list">
+        <li><strong>Erro no cadastro de paciente</strong> (2 ocorrências — possível causa sistêmica)</li>
+        <li><strong>Histórico com filtros</strong> (2 ocorrências, 2 classificados como indevidos)</li>
+        <li><strong>Personalização de receituário</strong> (recorrente)</li>
+        <li><strong>Autenticação Safe ID</strong> (escalonado N3, recorrente)</li>
+        <li><strong>Atestado desconfigurado</strong> (dúvida de usabilidade)</li>
+      </ul>
+    </div>
+    <div class="exec-block"><div class="exec-bt">Pontos de Atenção</div>
+      <ul class="exec-list">
+        <li><strong>Cadastro de pacientes</strong> com 2 bugs distintos — investigar causa raiz</li>
+        <li><strong>CXATEND-4938</strong> com 47h+ aguardando cliente — risco de SLA</li>
+        <li><strong>2 cards indevidos</strong> — oportunidade de autoatendimento</li>
+        <li><strong>Autenticação Safe ID</strong> — recorrente + escalonamento, atenção especial</li>
+        <li><strong>CXATEND-4954</strong> — 44h de tempo total acumulado</li>
+      </ul>
+    </div>
+    <div class="exec-block"><div class="exec-bt">Destaques Positivos</div>
+      <ul class="exec-list">
+        <li><strong>${cnt(d,'sla_cumprido','Sim')}/${total} SLAs</strong> de primeira resposta cumpridos</li>
+        <li><strong>100% de resolução</strong> realizada pelo SE</li>
+        <li><strong>SLA médio abaixo de 2h</strong> — eficiência acima da meta</li>
+        <li>Apoio ao N3 Backend em 2 cards de bug sem escalonamento formal</li>
+      </ul>
+    </div>
+    <div class="exec-block"><div class="exec-bt">Recomendações</div>
+      <ul class="exec-list">
+        <li>Criar artigo sobre <strong>cadastro de pacientes</strong> na base de conhecimento</li>
+        <li>Investigar <strong>causa raiz do bug de histórico</strong> com time de Frontend</li>
+        <li>Follow-up ativo no <strong>CXATEND-4938</strong> (47h+ sem retorno)</li>
+        <li>Aprofundar investigação em <strong>Autenticação Safe ID</strong> com N3</li>
+        <li>Revisar triagem para <strong>reduzir cards indevidos</strong></li>
+      </ul>
+    </div>
+    <div class="exec-block"><div class="exec-bt">Oportunidades</div>
+      <ul class="exec-list">
+        <li><strong>FAQ de Usabilidade</strong> para impressão e configuração de documentos</li>
+        <li><strong>Alerta automático</strong> para cards em "Aguardando cliente" há mais de 24h</li>
+        <li><strong>Dashboard de bugs por módulo</strong> para identificar padrões sistêmicos</li>
+        <li><strong>Automação de triagem</strong> para tickets indevidos recorrentes</li>
+      </ul>
+    </div>
+  `;
+}
+
+// ── NAVIGATION ──
+const TITLES = {overview:'Visão Geral',mensal:'Análise Mensal',cards:'Cards',sla:'SLA & Tempo',insights:'Insights',exec:'Resumo Executivo'};
+function goSection(id) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('section-'+id).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>{ if(n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active'); });
-  document.getElementById('pageTitle').textContent = sectionTitles[id];
+  document.getElementById(`s-${id}`).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')===`goSection('${id}')`) n.classList.add('active');
+  });
+  document.getElementById('pageTitle').textContent = TITLES[id]||id;
+  curSection = id;
   rebuildAll();
 }
 
-// Init
+// ── INIT ──
 populateFilters();
+updateMonthCounts();
 rebuildAll();
 </script>
 </body>
