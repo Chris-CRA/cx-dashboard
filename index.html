@@ -213,6 +213,7 @@ body {
 
 /* ── KPI GRID ── */
 .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.kpi-grid-bottom { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
 
 .kpi {
   background: var(--bg-card);
@@ -474,6 +475,7 @@ tr:hover td { background: rgba(177,177,255,0.025); }
     <!-- ── OVERVIEW ── -->
     <div class="section active" id="s-overview">
       <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="kpi-grid-bottom" id="kpiGridBottom"></div>
       <div class="row col64">
         <div class="card">
           <div class="card-head">
@@ -777,20 +779,22 @@ function buildKpis(d) {
       <div class="kpi-val">${rec}</div>
       <div class="kpi-foot">${rec>0?`<span class="wu">${pRec}% — causa raiz pendente</span>`:'<strong>Nenhuma</strong> recorrência'}</div>
     </div>
-    <div class="kpi t" style="grid-column:span 1"><div class="kpi-glow"></div>
+  `;
+  document.getElementById('kpiGridBottom').innerHTML = `
+    <div class="kpi t"><div class="kpi-glow"></div>
       <div class="kpi-label">SLA Médio 1ª Resp.</div>
       <div class="kpi-val">${slaM.toFixed(1)}<span>h</span></div>
       <div class="kpi-foot">${slaM<=4?'<strong>Dentro da meta ≤4h</strong>':'<span class="wu">Acima de 4h</span>'}</div>
     </div>
-    <div class="kpi v" style="grid-column:span 1"><div class="kpi-glow"></div>
+    <div class="kpi v"><div class="kpi-glow"></div>
       <div class="kpi-label">Tempo Médio Total</div>
       <div class="kpi-val">${tM.toFixed(1)}<span>h</span></div>
       <div class="kpi-foot">Abertura → última resposta</div>
     </div>
-    <div class="kpi t" style="grid-column:span 2"><div class="kpi-glow"></div>
+    <div class="kpi t"><div class="kpi-glow"></div>
       <div class="kpi-label">Cards Encerrados</div>
-      <div class="kpi-val">${enc}<span style="font-size:16px;font-weight:400;color:var(--text-muted)"> / ${total}</span></div>
-      <div class="kpi-foot"><strong>${pEnc}%</strong> de taxa de encerramento no período</div>
+      <div class="kpi-val">${enc}<span> / ${total}</span></div>
+      <div class="kpi-foot"><strong>${pEnc}%</strong> de taxa de encerramento</div>
     </div>
   `;
   document.getElementById('chipTotal').textContent = `${total} cards`;
