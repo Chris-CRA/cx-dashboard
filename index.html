@@ -745,19 +745,22 @@ function rebuildAll() {
 // ── KPIs ──
 function buildKpis(d) {
   const total = d.length;
-  const seR = cnt(d,'resolvido_se','Sim');
-  const n3 = cnt(d,'escalonado_n3','Sim');
-  const jiras = d.filter(x=>x.tem_jira).length;
-  const slaM = avg(d,'sla_h');
-  const tM = avg(d,'tempo_total_h');
-  const pSe = total?(seR/total*100).toFixed(0):0;
-  const pN3 = total?(n3/total*100).toFixed(0):0;
+  const seR   = cnt(d,'resolvido_se','Sim');
+  const n3    = cnt(d,'escalonado_n3','Sim');
+  const rec   = cnt(d,'recorrente','Sim');
+  const slaM  = avg(d,'sla_h');
+  const tM    = avg(d,'tempo_total_h');
+  const pSe   = total?(seR/total*100).toFixed(0):0;
+  const pN3   = total?(n3/total*100).toFixed(0):0;
+  const pRec  = total?(rec/total*100).toFixed(0):0;
+  const enc   = cnt(d,'status','Encerrado');
+  const pEnc  = total?(enc/total*100).toFixed(0):0;
 
   document.getElementById('kpiGrid').innerHTML = `
     <div class="kpi v"><div class="kpi-glow"></div>
       <div class="kpi-label">Total de Cards</div>
       <div class="kpi-val">${total}</div>
-      <div class="kpi-foot"><span class="hi">Junho 2026</span> · todos os canais</div>
+      <div class="kpi-foot"><span class="hi">${total} atendimentos</span> no período</div>
     </div>
     <div class="kpi t"><div class="kpi-glow"></div>
       <div class="kpi-label">Resolvidos pelo SE</div>
@@ -767,32 +770,27 @@ function buildKpis(d) {
     <div class="kpi w"><div class="kpi-glow"></div>
       <div class="kpi-label">Escalonados para N3</div>
       <div class="kpi-val">${n3}</div>
-      <div class="kpi-foot ${n3>0?'wu':''}"> ${n3>0?`${pN3}% do volume`:'<strong>Zero</strong> escalonamentos'}</div>
+      <div class="kpi-foot ${n3>0?'wu':''}">${n3>0?`${pN3}% do volume`:'<strong>Zero</strong> escalonamentos'}</div>
     </div>
     <div class="kpi b"><div class="kpi-glow"></div>
-      <div class="kpi-label">Jiras Vinculados</div>
-      <div class="kpi-val">${jiras}</div>
-      <div class="kpi-foot">${total?(jiras/total*100).toFixed(0):0}% dos atendimentos</div>
+      <div class="kpi-label">Recorrentes</div>
+      <div class="kpi-val">${rec}</div>
+      <div class="kpi-foot">${rec>0?`<span class="wu">${pRec}% — causa raiz pendente</span>`:'<strong>Nenhuma</strong> recorrência'}</div>
     </div>
-    <div class="kpi t"><div class="kpi-glow"></div>
+    <div class="kpi t" style="grid-column:span 1"><div class="kpi-glow"></div>
       <div class="kpi-label">SLA Médio 1ª Resp.</div>
       <div class="kpi-val">${slaM.toFixed(1)}<span>h</span></div>
       <div class="kpi-foot">${slaM<=4?'<strong>Dentro da meta ≤4h</strong>':'<span class="wu">Acima de 4h</span>'}</div>
     </div>
-    <div class="kpi v"><div class="kpi-glow"></div>
+    <div class="kpi v" style="grid-column:span 1"><div class="kpi-glow"></div>
       <div class="kpi-label">Tempo Médio Total</div>
       <div class="kpi-val">${tM.toFixed(1)}<span>h</span></div>
       <div class="kpi-foot">Abertura → última resposta</div>
     </div>
-    <div class="kpi t"><div class="kpi-glow"></div>
-      <div class="kpi-label">Taxa Resolução SE</div>
-      <div class="kpi-val">${pSe}<span>%</span></div>
-      <div class="kpi-foot"><strong>Autonomia completa</strong></div>
-    </div>
-    <div class="kpi b"><div class="kpi-glow"></div>
-      <div class="kpi-label">Taxa Escalonamento</div>
-      <div class="kpi-val">${pN3}<span>%</span></div>
-      <div class="kpi-foot">${n3===0?'Nenhum no período':'Cards para N3'}</div>
+    <div class="kpi t" style="grid-column:span 2"><div class="kpi-glow"></div>
+      <div class="kpi-label">Cards Encerrados</div>
+      <div class="kpi-val">${enc}<span style="font-size:16px;font-weight:400;color:var(--text-muted)"> / ${total}</span></div>
+      <div class="kpi-foot"><strong>${pEnc}%</strong> de taxa de encerramento no período</div>
     </div>
   `;
   document.getElementById('chipTotal').textContent = `${total} cards`;
