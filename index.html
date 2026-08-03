@@ -455,6 +455,9 @@ tr:hover td { background: rgba(177,177,255,0.025); }
     <div class="month-tab" onclick="setMes('2026-07')" id="tab-2026-07">
       Julho 2026 <span class="month-tab-count" id="cnt-2026-07">0</span>
     </div>
+    <div class="month-tab" onclick="setMes('2026-08')" id="tab-2026-08">
+      Agosto 2026 <span class="month-tab-count" id="cnt-2026-08">0</span>
+    </div>
   </div>
 
   <!-- FILTER BAR -->
@@ -611,8 +614,8 @@ const RAW = [
   {"id":"CXATEND-5025","assunto":"Erro login","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-07-20T16:24:14","primeira_resp":"2026-07-20T18:27:41","ultima_resp":"2026-07-20T18:27:41","encerr_jira":"2026-07-22T09:39:02","sla_h":1.6,"tempo_total_h":2.06,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Encerrado","tipo":"Dúvida","motivo":"erro-acesso-medico","severidade":"Baixo","recorrente":"Sim","indevido":"Sim","mes":"2026-07","sprint":"Sprint Sorbet - 20 a 31/07","tem_jira":true,"dia":"2026-07-20"},
   {"id":"CXATEND-5031","assunto":"Busca de CEP com erro","categoria":"Solicitação","origem":"Jira CX","abertura":"2026-07-21T20:36:34","primeira_resp":"2026-07-22T09:25:31","ultima_resp":"2026-07-23T09:54:15","encerr_jira":"2026-07-28T14:21:41","sla_h":0.43,"tempo_total_h":37.3,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":"N3 Backend","status":"Encerrado","tipo":"Solicitação","motivo":"erro-busca-cep","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-07","sprint":"Sprint Sorbet - 20 a 31/07","tem_jira":true,"dia":"2026-07-21"},
   {"id":"CXATEND-5035","assunto":"Endereço receituário","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-07-23T13:39:26","primeira_resp":"2026-07-23T18:39:45","ultima_resp":"2026-07-24T09:15:50","encerr_jira":"2026-07-27T09:07:01","sla_h":4.34,"tempo_total_h":19.61,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Encerrado","tipo":"Dúvida","motivo":"opçoes-de-receituario","severidade":"Baixo","recorrente":"Não","indevido":"Sim","mes":"2026-07","sprint":"Sprint Sorbet - 20 a 31/07","tem_jira":true,"dia":"2026-07-23"},
-  {"id":"CXATEND-5041","assunto":"Histórico de documentos","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-07-27T16:50:40","primeira_resp":"2026-07-27T18:14:15","ultima_resp":null,"encerr_jira":null,"sla_h":1.16,"tempo_total_h":null,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Dúvida","motivo":"exibir-histórico-pacientes","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-07","sprint":"Sprint Sorbet - 20 a 31/07","tem_jira":false,"dia":"2026-07-27"},
-  {"id":"CXATEND-5052","assunto":"Template receituário não reflete","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-07-30T19:34:20","primeira_resp":"2026-07-31T09:29:26","ultima_resp":null,"encerr_jira":null,"sla_h":0.49,"tempo_total_h":null,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Aguardando cliente","tipo":"Dúvida","motivo":"sincronismo-conta","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-07","sprint":"Sprint Sorbet - 20 a 31/07","tem_jira":false,"dia":"2026-07-30"}
+  {"id":"CXATEND-5041","assunto":"Histórico de documentos","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-07-27T16:50:40","primeira_resp":"2026-07-27T18:14:15","ultima_resp":"2026-07-27T18:14:15","encerr_jira":"2026-08-01T18:00:20","sla_h":1.16,"tempo_total_h":0.56,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Encerrado","tipo":"Dúvida","motivo":"exibir-histórico-pacientes","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-07","sprint":"Sprint Sorbet - 20 a 31/07","tem_jira":true,"dia":"2026-07-27"},
+  {"id":"CXATEND-5052","assunto":"Template receituário não reflete","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-07-30T19:34:20","primeira_resp":"2026-07-31T09:29:26","ultima_resp":"2026-07-31T09:29:26","encerr_jira":"2026-08-03T09:17:35","sla_h":0.49,"tempo_total_h":13.92,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Encerrado","tipo":"Dúvida","motivo":"sincronismo-conta","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-07","sprint":"Sprint Sorbet - 20 a 31/07","tem_jira":true,"dia":"2026-07-30"}
 ];
 
 // State
@@ -628,7 +631,7 @@ const cnt = (a,k,v) => a.filter(d=>d[k]===v).length;
 const freq = (a,k) => { const m={}; a.forEach(d=>{const v=d[k]; m[v]=(m[v]||0)+1;}); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };
 const fmtH = h => h==null?'—':`${h.toFixed(2)}h`;
 const fmtDate = ts => { if(!ts) return '—'; const d=new Date(ts); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`; };
-const mesLabel = m => m==='2026-06'?'Jun/26':m==='2026-07'?'Jul/26':m;
+const mesLabel = m => m==='2026-06'?'Jun/26':m==='2026-07'?'Jul/26':m==='2026-08'?'Ago/26':m;
 
 // ── CHART DEFAULTS ──
 Chart.defaults.color = '#7B8BB5';
@@ -675,7 +678,7 @@ function setMes(mes) {
 }
 
 function updateMonthCounts() {
-  const months = ['2026-06','2026-07'];
+  const months = ['2026-06','2026-07','2026-08'];
   months.forEach(m => {
     const el = document.getElementById(`cnt-${m}`);
     if(el) el.textContent = RAW.filter(d=>d.mes===m).length;
@@ -841,7 +844,7 @@ function buildOverviewCharts(d) {
 
 // ── MENSAL ──
 function buildMensalSection(d) {
-  const months = ['2026-06','2026-07'];
+  const months = ['2026-06','2026-07','2026-08'];
   const mLabels = months.map(mesLabel);
   const mCounts = months.map(m=>RAW.filter(x=>x.mes===m).length);
   const mSla = months.map(m=>{
@@ -864,6 +867,7 @@ function buildMensalSection(d) {
   // Compare body
   const junData = RAW.filter(x=>x.mes==='2026-06');
   const julData = RAW.filter(x=>x.mes==='2026-07');
+  const agoData = RAW.filter(x=>x.mes==='2026-08');
 
   const compareBody = document.getElementById('compareBody');
   const mkMonthSummary = (data, label) => {
@@ -903,7 +907,7 @@ function buildMensalSection(d) {
       </div>
     `;
   };
-  compareBody.innerHTML = `<div class="compare-grid">${mkMonthSummary(junData,'Junho 2026')}${mkMonthSummary(julData,'Julho 2026')}</div>`;
+  compareBody.innerHTML = `<div class="compare-grid" style="grid-template-columns:1fr 1fr 1fr">${mkMonthSummary(junData,'Junho 2026')}${mkMonthSummary(julData,'Julho 2026')}${mkMonthSummary(agoData,'Agosto 2026')}</div>`;
 }
 
 // ── TABLE ──
