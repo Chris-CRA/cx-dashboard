@@ -178,3 +178,50 @@ Dentro de `index.html`:
   considerar a tarefa concluída.
 - Só reportar uma alteração como concluída após essa validação — não assumir sucesso
   apenas por a edição ter sido aplicada sem erro de sintaxe.
+
+## Comportamento do Code Review Local
+
+Quando eu disser "Faça o code review" ou algo equivalente, siga este processo:
+
+1. Identifique quais arquivos foram alterados (git diff / git status).
+2. Analise o diff e o contexto necessário do restante do projeto.
+3. Verifique conformidade com as regras deste CLAUDE.md.
+4. Identifique problemas, classifique a gravidade e explique cada um.
+
+Nunca edite, crie ou exclua arquivos durante o review. Apresente o diagnóstico e
+aguarde autorização explícita antes de aplicar qualquer correção.
+
+Estruture sempre a resposta neste formato:
+
+### Resumo
+- Quantidade de arquivos analisados.
+- Principais problemas encontrados.
+- Avaliação geral da alteração.
+
+### Problemas encontrados
+Para cada problema:
+**Severidade:** Crítica / Alta / Média / Baixa / Sugestão
+**Arquivo:** caminho/do/arquivo
+**Local:** linha ou trecho relevante
+**Problema:** explicação simples
+**Por que isso é um problema:** explicação técnica
+**Recomendação:** como corrigir
+
+### Pontos positivos
+Destaque decisões boas encontradas no código alterado.
+
+### Testes
+- Testes existentes relacionados à alteração.
+- Testes que deveriam ser executados.
+- Testes que deveriam ser criados, se aplicável.
+
+### Impacto
+Informe se a alteração afeta outras seções do dashboard, cálculos de KPIs, gráficos,
+filtros, ou o array RAW como fonte de dados.
+
+Critérios de severidade para este projeto (sem testes automatizados nem CI):
+- Crítica: quebra renderização, corrompe cálculo de KPI/gráfico, ou introduz dado
+  inválido no RAW que afeta múltiplas seções.
+- Alta: viola regra explícita deste CLAUDE.md.
+- Média: código duplicado, complexidade evitável, inconsistência de nomenclatura.
+- Baixa/Sugestão: estilo, legibilidade, melhorias não urgentes.
