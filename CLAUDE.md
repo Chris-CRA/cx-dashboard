@@ -88,6 +88,16 @@ Dentro de `index.html`:
   que os referenciam (`buildKpis`, `buildSla`, `buildInsights`, `buildExec`, filtros).
 - Ao adicionar novos chamados, seguir exatamente o formato de data ISO já usado
   (`"2026-08-11T09:44:41"`) e o padrão de `mes` (`"YYYY-MM"`) e `dia` (`"YYYY-MM-DD"`).
+- **Regra de sincronização do SLA (`sla_h`)**: o campo `sla_h` é um valor **já
+  calculado na planilha de origem** (`SupportCX Base.xlsx`), na coluna SLA (coluna I),
+  pela fórmula `=HORAS_UTEIS(E;F;Feriados!A:A)` — que calcula horas úteis entre a
+  Data de Abertura (coluna E) e a Data 1ª Resposta (coluna F), descontando os
+  feriados listados na aba `Feriados`. Ao atualizar o `RAW`, `sla_h` deve ser
+  copiado diretamente do valor já calculado nessa coluna. **Não recalcular o SLA no
+  dashboard** (ex.: a partir de `abertura`/`primeira_resp` com diferença simples de
+  datas), **não substituir o valor por uma diferença de datas corrida**, e **não criar
+  uma nova coluna/campo de SLA**. Se a fórmula da planilha mudar, a sincronização deve
+  apenas refletir o novo valor calculado, sem alterar a lógica do dashboard.
 
 ## Cuidados ao Alterar CSS e JavaScript
 
