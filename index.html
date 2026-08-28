@@ -765,7 +765,7 @@ const catChip = cat => {
   return `<span class="chip ${m[cat]||'chip-muted'}">${cat}</span>`;
 };
 const stChip = s => {
-  const m={Encerrado:'chip-t','Aguardando cliente':'chip-w','Em andamento':'chip-v','Respondido / Aguardando retorno':'chip-w'};
+  const m={Encerrado:'chip-t','Aguardando cliente':'chip-w','Em andamento':'chip-v','Respondido / Aguardando retorno':'chip-w','Aguardando N3':'chip-b'};
   return `<span class="chip ${m[s]||'chip-muted'}">${s}</span>`;
 };
 const yn = (v,on='chip-t',off='chip-muted') => v==='Sim'?`<span class="chip ${on}">Sim</span>`:`<span class="chip ${off}">—</span>`;
