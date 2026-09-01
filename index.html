@@ -449,15 +449,7 @@ tr:hover td { background: rgba(177,177,255,0.025); }
       <span class="month-all">Todos os meses</span>
     </div>
     <div class="month-divider"></div>
-    <div class="month-tab" onclick="setMes('2026-06')" id="tab-2026-06">
-      Junho 2026 <span class="month-tab-count" id="cnt-2026-06">0</span>
-    </div>
-    <div class="month-tab" onclick="setMes('2026-07')" id="tab-2026-07">
-      Julho 2026 <span class="month-tab-count" id="cnt-2026-07">0</span>
-    </div>
-    <div class="month-tab" onclick="setMes('2026-08')" id="tab-2026-08">
-      Agosto 2026 <span class="month-tab-count" id="cnt-2026-08">0</span>
-    </div>
+    <!-- Abas dos últimos 3 meses injetadas dinamicamente por renderMonthTabs() -->
   </div>
 
   <!-- FILTER BAR -->
@@ -640,7 +632,10 @@ const RAW = [
   {"id":"CXATEND-5156","assunto":"Tela de criar prescrição em branco na v4","categoria":"Bug","origem":"Jira CX","abertura":"2026-08-27T12:24:13","primeira_resp":"2026-08-27T14:50:44","ultima_resp":null,"encerr_jira":null,"sla_h":2.44,"tempo_total_h":null,"sla_cumprido":"Sim","escalonado_n3":"Sim","resolvido_se":"Não","apoio":"N3 Frontend","status":"Aguardando N3","tipo":"Bug","motivo":"erro-abrir-tela-memed","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-08","sprint":"Sprint Elsa - 14 a 28/08","tem_jira":true,"dia":"2026-08-27"},
   {"id":"CXATEND-5160","assunto":"Histórico prescrição não localizado","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-08-27T14:28:13","primeira_resp":"2026-08-27T14:59:18","ultima_resp":null,"encerr_jira":null,"sla_h":0.52,"tempo_total_h":null,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Respondido / Aguardando retorno","tipo":"Dúvida","motivo":"dados-incoerentes-histórico","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-08","sprint":"Sprint Elsa - 14 a 28/08","tem_jira":true,"dia":"2026-08-27"},
   {"id":"CXATEND-5168","assunto":"Cadastro médico não localizado","categoria":"Bug","origem":"Jira CX","abertura":"2026-08-27T20:25:14","primeira_resp":"2026-08-28T10:46:08","ultima_resp":"2026-08-31T09:17:08","encerr_jira":null,"sla_h":1.77,"tempo_total_h":null,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Respondido / Aguardando retorno","tipo":"Bug","motivo":"sincronismo-conta","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-08","sprint":"Sprint Elsa - 14 a 28/08","tem_jira":true,"dia":"2026-08-27"},
-  {"id":"CXATEND-5169","assunto":"Prescrição não avança na v4 - Patiente Not Found","categoria":"Bug","origem":"Jira CX","abertura":"2026-08-28T09:37:03","primeira_resp":"2026-08-28T11:12:43","ultima_resp":"2026-08-28T11:12:43","encerr_jira":"2026-08-31T09:09:23","sla_h":1.59,"tempo_total_h":1.59,"sla_cumprido":"Sim","escalonado_n3":"Sim","resolvido_se":"Não","apoio":"N3 Frontend","status":"Encerrado","tipo":"Bug","motivo":"erro-cadastro-paciente","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-08","sprint":"Sprint Elsa - 14 a 28/08","tem_jira":true,"dia":"2026-08-28"}
+  {"id":"CXATEND-5169","assunto":"Prescrição não avança na v4 - Patiente Not Found","categoria":"Bug","origem":"Jira CX","abertura":"2026-08-28T09:37:03","primeira_resp":"2026-08-28T11:12:43","ultima_resp":"2026-08-28T11:12:43","encerr_jira":"2026-08-31T09:09:23","sla_h":1.59,"tempo_total_h":1.59,"sla_cumprido":"Sim","escalonado_n3":"Sim","resolvido_se":"Não","apoio":"N3 Frontend","status":"Encerrado","tipo":"Bug","motivo":"erro-cadastro-paciente","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-08","sprint":"Sprint Elsa - 14 a 28/08","tem_jira":true,"dia":"2026-08-28"},
+  {"id":"CXATEND-5179","assunto":"Erro na Autenticação do VidaaS","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-08-31T16:29:12","primeira_resp":"2026-08-31T18:02:23","ultima_resp":null,"encerr_jira":null,"sla_h":1.51,"tempo_total_h":null,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Respondido / Aguardando retorno","tipo":"Dúvida","motivo":"erro-assinatura-vidaas","severidade":"Baixo","recorrente":"Não","indevido":"Sim","mes":"2026-08","sprint":"Sprint Raspadinha - 31/08 a 11/09","tem_jira":true,"dia":"2026-08-31"},
+  {"id":"CXATEND-5180","assunto":"Erro ao criar Modelo de exames","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-08-31T20:10:06","primeira_resp":"2026-09-01T12:40:05","ultima_resp":null,"encerr_jira":null,"sla_h":3.67,"tempo_total_h":null,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Respondido / Aguardando retorno","tipo":"Dúvida","motivo":"erro-criar-protocolo","severidade":"Baixo","recorrente":"Não","indevido":"Sim","mes":"2026-08","sprint":"Sprint Raspadinha - 31/08 a 11/09","tem_jira":true,"dia":"2026-08-31"},
+  {"id":"CXATEND-5183","assunto":"Personalização do rodapé receituário","categoria":"Usabilidade","origem":"Jira CX","abertura":"2026-09-01T14:19:57","primeira_resp":"2026-09-01T14:29:23","ultima_resp":null,"encerr_jira":null,"sla_h":0.16,"tempo_total_h":null,"sla_cumprido":"Sim","escalonado_n3":"Não","resolvido_se":"Sim","apoio":null,"status":"Respondido / Aguardando retorno","tipo":"Dúvida","motivo":"opções-receituário","severidade":"Baixo","recorrente":"Não","indevido":"Não","mes":"2026-09","sprint":"Sprint Raspadinha - 31/08 a 11/09","tem_jira":true,"dia":"2026-09-01"}
 ];
 
 // State
@@ -650,13 +645,20 @@ let curSection = 'overview';
 let tags = { jira:false, n3:false, rec:false, indev:false };
 let charts = {};
 
+// Visão Geral sempre reflete só os últimos 3 meses com dados no RAW (janela rolante).
+// Demais seções (Por Mês, Cards, SLA & Tempo, Insights, Executivo) continuam usando o histórico completo.
+const LAST3_MESES = [...new Set(RAW.map(d=>d.mes))].sort().slice(-3);
+
 // ── HELPERS ──
 const avg = (a, k) => { const v=a.filter(d=>d[k]!=null).map(d=>d[k]); return v.length? v.reduce((x,y)=>x+y,0)/v.length :0; };
 const cnt = (a,k,v) => a.filter(d=>d[k]===v).length;
 const freq = (a,k) => { const m={}; a.forEach(d=>{const v=d[k]; m[v]=(m[v]||0)+1;}); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };
 const fmtH = h => h==null?'—':`${h.toFixed(2)}h`;
 const fmtDate = ts => { if(!ts) return '—'; const d=new Date(ts); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`; };
-const mesLabel = m => m==='2026-06'?'Jun/26':m==='2026-07'?'Jul/26':m==='2026-08'?'Ago/26':m;
+const MES_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const MES_PT_ABBR = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const mesLabel = m => { const [y,mm]=m.split('-'); return `${MES_PT_ABBR[+mm-1]}/${y.slice(2)}`; };
+const mesNomeCompleto = m => { const [y,mm]=m.split('-'); const nome=MES_PT[+mm-1]; return `${nome.charAt(0).toUpperCase()+nome.slice(1)} ${y}`; };
 
 // ── CHART DEFAULTS ──
 Chart.defaults.color = '#7B8BB5';
@@ -702,11 +704,17 @@ function setMes(mes) {
   applyFilters();
 }
 
-function updateMonthCounts() {
-  const months = ['2026-06','2026-07','2026-08'];
-  months.forEach(m => {
-    const el = document.getElementById(`cnt-${m}`);
-    if(el) el.textContent = RAW.filter(d=>d.mes===m).length;
+function renderMonthTabs() {
+  const bar = document.getElementById('monthTabs');
+  bar.querySelectorAll('.month-tab:not(#tab-all)').forEach(t=>t.remove());
+  LAST3_MESES.forEach(m => {
+    const count = RAW.filter(d=>d.mes===m).length;
+    const btn = document.createElement('div');
+    btn.className = 'month-tab';
+    btn.id = `tab-${m}`;
+    btn.onclick = () => setMes(m);
+    btn.innerHTML = `${mesNomeCompleto(m)} <span class="month-tab-count" id="cnt-${m}">${count}</span>`;
+    bar.appendChild(btn);
   });
 }
 
@@ -774,8 +782,9 @@ const yn = (v,on='chip-t',off='chip-muted') => v==='Sim'?`<span class="chip ${on
 function rebuildAll() {
   const d = filtered;
   document.getElementById('countPill').textContent = `${d.length} card${d.length!==1?'s':''}`;
-  buildKpis(d);
-  buildOverviewCharts(d);
+  const overviewData = d.filter(x=>LAST3_MESES.includes(x.mes));
+  buildKpis(overviewData);
+  buildOverviewCharts(overviewData);
   buildMensalSection(d);
   buildTable(d);
   buildSla(d);
@@ -869,31 +878,28 @@ function buildOverviewCharts(d) {
 
 // ── MENSAL ──
 function buildMensalSection(d) {
-  const months = ['2026-06','2026-07','2026-08'];
+  const months = [...new Set(RAW.map(x=>x.mes))].sort();
   const mLabels = months.map(mesLabel);
   const mCounts = months.map(m=>RAW.filter(x=>x.mes===m).length);
   const mSla = months.map(m=>{
     const v=RAW.filter(x=>x.mes===m&&x.sla_h!=null).map(x=>x.sla_h);
     return v.length? (v.reduce((a,b)=>a+b,0)/v.length) :0;
   });
+  const alt = (a,b) => months.map((_,i)=> i%2===0? a : b);
 
   mkChart('cMensal','bar',mLabels,mCounts,{
-    backgroundColor:['rgba(177,177,255,0.7)','rgba(78,127,255,0.4)'],
+    backgroundColor:alt('rgba(177,177,255,0.7)','rgba(78,127,255,0.4)'),
     borderRadius:8, borderSkipped:false,
     ttCb:{label:c=>`${c.raw} cards`}
   });
 
   mkChart('cSlaMensal','bar',mLabels,mSla,{
-    backgroundColor:['rgba(0,212,180,0.7)','rgba(0,212,180,0.3)'],
+    backgroundColor:alt('rgba(0,212,180,0.7)','rgba(0,212,180,0.3)'),
     borderRadius:8, borderSkipped:false,
     ttCb:{label:c=>`${c.raw.toFixed(2)}h`}
   });
 
   // Compare body
-  const junData = RAW.filter(x=>x.mes==='2026-06');
-  const julData = RAW.filter(x=>x.mes==='2026-07');
-  const agoData = RAW.filter(x=>x.mes==='2026-08');
-
   const compareBody = document.getElementById('compareBody');
   const mkMonthSummary = (data, label) => {
     if(!data.length) return `
@@ -932,13 +938,14 @@ function buildMensalSection(d) {
       </div>
     `;
   };
-  compareBody.innerHTML = `<div class="compare-grid" style="grid-template-columns:1fr 1fr 1fr">${mkMonthSummary(junData,'Junho 2026')}${mkMonthSummary(julData,'Julho 2026')}${mkMonthSummary(agoData,'Agosto 2026')}</div>`;
+  compareBody.innerHTML = `<div class="compare-grid" style="grid-template-columns:repeat(${months.length},1fr)">${months.map(m=>mkMonthSummary(RAW.filter(x=>x.mes===m),mesNomeCompleto(m))).join('')}</div>`;
 }
 
 // ── TABLE ──
 function buildTable(d) {
   document.getElementById('tableSubtitle').textContent = `${d.length} registros exibidos`;
-  document.getElementById('tBody').innerHTML = d.map(r=>`
+  const ordered = [...d].sort((a,b)=> new Date(b.abertura) - new Date(a.abertura));
+  document.getElementById('tBody').innerHTML = ordered.map(r=>`
     <tr>
       <td class="td-mono">${r.id}</td>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.assunto}">${r.assunto}</td>
@@ -1108,15 +1115,17 @@ function buildExec(d) {
   const slaM = avg(d,'sla_h');
   const pSe = total?(seR/total*100).toFixed(0):0;
 
-  const NOME_MES = {'2026-06':'junho','2026-07':'julho','2026-08':'agosto'};
+  const nomeMes = m => MES_PT[+m.split('-')[1]-1];
+  const anoMes = m => m.split('-')[0];
   const mesesPresentes = [...new Set(d.map(x=>x.mes))].sort();
   let periodoTxt;
   if (curMes !== 'all') {
-    periodoTxt = `${NOME_MES[curMes] || curMes} de 2026`;
+    periodoTxt = `${nomeMes(curMes)} de ${anoMes(curMes)}`;
   } else if (mesesPresentes.length <= 1) {
-    periodoTxt = mesesPresentes[0] ? `${NOME_MES[mesesPresentes[0]] || mesesPresentes[0]} de 2026` : 'período consolidado';
+    periodoTxt = mesesPresentes[0] ? `${nomeMes(mesesPresentes[0])} de ${anoMes(mesesPresentes[0])}` : 'período consolidado';
   } else {
-    periodoTxt = `${NOME_MES[mesesPresentes[0]] || mesesPresentes[0]} a ${NOME_MES[mesesPresentes[mesesPresentes.length-1]] || mesesPresentes[mesesPresentes.length-1]} de 2026`;
+    const ultimo = mesesPresentes[mesesPresentes.length-1];
+    periodoTxt = `${nomeMes(mesesPresentes[0])} a ${nomeMes(ultimo)} de ${anoMes(ultimo)}`;
   }
 
   document.getElementById('execKpis').innerHTML = `
@@ -1203,7 +1212,7 @@ function goSection(id) {
 
 // ── INIT ──
 populateFilters();
-updateMonthCounts();
+renderMonthTabs();
 rebuildAll();
 </script>
 </body>
