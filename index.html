@@ -274,7 +274,7 @@ tbody tr:last-child td { border-bottom: none; }
       <button class="tab" onclick="goSection('sla')">SLA & Tempo</button>
     </nav>
     <div class="topnav-right">
-      <span class="count-ghost"><b id="countPill">—</b> cards</span>
+      <span class="count-ghost"><b id="countPill">—</b> <span id="countPillLabel">cards · histórico completo</span></span>
       <div class="avatar">C</div>
     </div>
   </div>
@@ -303,9 +303,9 @@ tbody tr:last-child td { border-bottom: none; }
   <div class="view active" id="s-overview">
     <section class="stat-band">
       <div class="stat-hero">
-        <div class="stat-hero-eyebrow">Total de Cards</div>
+        <div class="stat-hero-eyebrow" id="heroEyebrow">Total de Cards · Últimos 3 meses</div>
         <div class="stat-hero-figure" id="heroFigure">0</div>
-        <div class="stat-hero-caption">no período selecionado</div>
+        <div class="stat-hero-caption" id="heroCaption">—</div>
       </div>
       <div class="stat-secondary" id="statSecondary"></div>
     </section>
@@ -509,6 +509,13 @@ const fmtDate = ts => { if(!ts) return '—'; const d=new Date(ts); return `${St
 const MES_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const MES_PT_ABBR = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const mesLabel = m => { const [y,mm]=m.split('-'); return `${MES_PT_ABBR[+mm-1]}/${y.slice(2)}`; };
+// "jul – set 2026" (ou "nov 2026 – jan 2027" quando a janela cruza o ano)
+const janelaLabel = () => {
+  const [ini, fim] = [LAST3_MESES[0], LAST3_MESES[LAST3_MESES.length-1]];
+  const ab = m => MES_PT_ABBR[+m.split('-')[1]-1].toLowerCase();
+  const [yi, yf] = [ini.slice(0,4), fim.slice(0,4)];
+  return yi===yf ? `${ab(ini)} – ${ab(fim)} ${yf}` : `${ab(ini)} ${yi} – ${ab(fim)} ${yf}`;
+};
 const mesNomeCompleto = m => { const [y,mm]=m.split('-'); const nome=MES_PT[+mm-1]; return `${nome.charAt(0).toUpperCase()+nome.slice(1)} ${y}`; };
 
 // ── SEMANTIC COLOR MAP (categoria/status/tipo) ──
@@ -643,9 +650,20 @@ const yn = (v,on='chip-good',off='chip-muted') => v==='Sim'?`<span class="chip $
 // ── REBUILD ──
 function rebuildAll() {
   const d = filtered;
+  const sprint = document.getElementById('fSprint').value;
+  const temFiltro = curMes!=='all' || sprint || document.getElementById('fCat').value
+    || document.getElementById('fStatus').value || document.getElementById('fTipo').value
+    || Object.values(tags).some(Boolean);
   document.getElementById('countPill').textContent = d.length;
+  document.getElementById('countPillLabel').textContent = temFiltro ? `de ${RAW.length} cards` : 'cards · histórico completo';
   const overviewData = d.filter(x=>LAST3_MESES.includes(x.mes));
   buildKpis(overviewData);
+  // Rótulos do total da Visão Geral: deixam explícito o recorte dos últimos 3 meses
+  const janela = curMes==='all' && !sprint;
+  const periodo = sprint ? sprint : curMes!=='all' ? mesNomeCompleto(curMes).toLowerCase() : janelaLabel();
+  const complemento = overviewData.length!==d.length ? ` · de ${d.length} no histórico completo` : '';
+  document.getElementById('heroEyebrow').textContent = janela ? 'Total de Cards · Últimos 3 meses' : 'Total de Cards';
+  document.getElementById('heroCaption').textContent = periodo + complemento;
   buildOverviewCharts(overviewData);
   buildMensalSection(d);
   buildTable(d);
