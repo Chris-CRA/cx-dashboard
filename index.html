@@ -221,6 +221,8 @@ th {
   background: var(--surface-alt); border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
+th[data-sort] { cursor: pointer; user-select: none; }
+th[data-sort]:hover { color: var(--ink); }
 td { padding: 12px 18px; font-size: 12.5px; color: var(--ink); border-bottom: 1px solid var(--border); vertical-align: middle; }
 tbody tr:hover td { background: var(--violet-wash); }
 tbody tr:last-child td { border-bottom: none; }
@@ -372,15 +374,30 @@ tbody tr:last-child td { border-bottom: none; }
   <!-- ── CARDS TABLE ── -->
   <div class="view" id="s-cards">
     <div class="section-head">
+      <div><div class="section-eyebrow">Acompanhamento</div><div class="section-title">Sprints e Pendências</div></div>
+    </div>
+    <div class="duo">
+      <div class="tile">
+        <div class="tile-eyebrow">Cadência</div><div class="tile-title">Cards por Sprint</div>
+        <div class="tile-chart" style="min-height:260px"><canvas id="cSprint"></canvas></div>
+      </div>
+      <div class="tile">
+        <div class="tile-eyebrow">Atenção</div><div class="tile-title">Cards em Aberto</div>
+        <div class="section-sub" id="abertoSub"></div>
+        <div style="margin-top:14px;max-height:300px;overflow-y:auto"><div class="detail-list" id="abertoList"></div></div>
+      </div>
+    </div>
+    <div class="section-head">
       <div><div class="section-eyebrow">Detalhamento</div><div class="section-title">Todos os Cards</div><div class="section-sub" id="tableSubtitle"></div></div>
+      <input class="filter-sel" id="fBusca" type="search" placeholder="Buscar ID ou assunto" oninput="buildTable(filtered)">
     </div>
     <div class="tbl-card">
       <div class="tbl-wrap">
-        <table>
+        <table id="tCards" data-sort="abertura" data-dir="desc">
           <thead><tr>
-            <th>Card</th><th>Assunto</th><th>Categoria</th><th>Status</th>
-            <th>Tipo</th><th>Jira</th><th>N3</th><th>Rec.</th>
-            <th>SLA 1ª Resp.</th><th>Mês</th>
+            <th data-sort="id">Card</th><th data-sort="assunto">Assunto</th><th data-sort="categoria">Categoria</th><th data-sort="status">Status</th>
+            <th data-sort="tipo">Tipo</th><th data-sort="tem_jira">Jira</th><th data-sort="escalonado_n3">N3</th><th data-sort="recorrente">Rec.</th>
+            <th data-sort="indevido">Indev.</th><th data-sort="sla_h">SLA 1ª Resp.</th><th data-sort="sprint">Sprint</th><th data-sort="abertura">Mês</th>
           </tr></thead>
           <tbody id="tBody"></tbody>
         </table>
@@ -511,6 +528,8 @@ let charts = {};
 // Visão Geral sempre reflete só os últimos 3 meses com dados no RAW (janela rolante).
 // Demais seções (Por Mês, Cards, SLA & Tempo) continuam usando o histórico completo.
 const LAST3_MESES = [...new Set(RAW.map(d=>d.mes))].sort().slice(-3);
+// Sprints em ordem cronológica (pela abertura do 1º card de cada uma); null = cards sem sprint (jun/26)
+const SPRINT_ORDEM = [...new Set([...RAW].sort((a,b)=>a.abertura.localeCompare(b.abertura)).map(d=>d.sprint))];
 
 // ── HELPERS ──
 const avg = (a, k) => { const v=a.filter(d=>d[k]!=null).map(d=>d[k]); return v.length? v.reduce((x,y)=>x+y,0)/v.length :0; };
@@ -648,6 +667,7 @@ function resetAll() {
   document.getElementById('fStatus').value='';
   document.getElementById('fTipo').value='';
   document.getElementById('fSprint').value='';
+  document.getElementById('fBusca').value='';
   ['fJira','fN3','fRec','fIndev'].forEach(id=>document.getElementById(id).classList.remove('on'));
   markCompareMeses(LAST3_MESES);
   document.querySelectorAll('.period-btn').forEach(t=>t.classList.remove('active'));
@@ -720,6 +740,7 @@ function rebuildAll() {
   buildOverviewCharts(overviewData);
   buildMensalSection(d);
   buildTable(d);
+  buildCardsPanel(d);
   buildSla(d);
 }
 
@@ -860,10 +881,34 @@ function buildMensalSection(d) {
 }
 
 // ── TABLE ──
+// Busca e ordenação são só de exibição da tabela: não alteram `filtered` nem as demais seções.
+// O estado de ordenação fica no próprio <table> (data-sort / data-dir), sem estado global novo.
+const sprintCurto = s => s ? s.replace(/^Sprint /,'').split(' - ')[0] : 'Sem sprint';
+function sortTable(key) {
+  const t = document.getElementById('tCards');
+  t.dataset.dir = t.dataset.sort===key && t.dataset.dir==='asc' ? 'desc' : 'asc';
+  t.dataset.sort = key;
+  buildTable(filtered);
+}
 function buildTable(d) {
-  document.getElementById('tableSubtitle').textContent = `${d.length} registros exibidos`;
-  const ordered = [...d].sort((a,b)=> new Date(b.abertura) - new Date(a.abertura));
-  document.getElementById('tBody').innerHTML = ordered.map(r=>`
+  const t = document.getElementById('tCards');
+  const [key, dir] = [t.dataset.sort, t.dataset.dir==='asc' ? 1 : -1];
+  const busca = document.getElementById('fBusca').value.trim().toLowerCase();
+  const rows = busca ? d.filter(r=>r.id.toLowerCase().includes(busca) || r.assunto.toLowerCase().includes(busca)) : d;
+  document.getElementById('tableSubtitle').textContent = busca
+    ? `${rows.length} de ${d.length} registros exibidos · busca "${busca}"`
+    : `${d.length} registros exibidos`;
+  const val = r => key==='sprint' ? SPRINT_ORDEM.indexOf(r.sprint) : key==='tem_jira' ? (r.tem_jira?'Sim':'Não') : r[key];
+  const ordered = [...rows].sort((a,b)=>{
+    const [va, vb] = [val(a), val(b)];
+    if(va==null || vb==null) return va==null ? (vb==null?0:1) : -1; // vazios sempre no fim
+    return (typeof va==='number' ? va-vb : String(va).localeCompare(String(vb),'pt')) * dir;
+  });
+  t.querySelectorAll('th[data-sort]').forEach(th=>{
+    th.textContent = th.textContent.replace(/ [▲▼]$/,'');
+    if(th.dataset.sort===key) th.textContent += dir===1 ? ' ▲' : ' ▼';
+  });
+  document.getElementById('tBody').innerHTML = ordered.length ? ordered.map(r=>`
     <tr>
       <td class="td-mono">${r.id}</td>
       <td class="td-ellipsis" title="${r.assunto}">${r.assunto}</td>
@@ -873,15 +918,68 @@ function buildTable(d) {
       <td>${yn(r.tem_jira?'Sim':'Não')}</td>
       <td>${yn(r.escalonado_n3,'chip-warn')}</td>
       <td>${r.recorrente==='Sim'?`<span class="chip chip-warn">Sim</span>`:`<span class="chip chip-muted">—</span>`}</td>
+      <td>${yn(r.indevido,'chip-warn')}</td>
       <td>
         <div style="display:flex;align-items:center;gap:8px">
           <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,r.sla_h/8*100)}%;background:${r.sla_h<=4?'var(--good)':'var(--warn)'}"></div></div>
           <span class="detail-num">${fmtH(r.sla_h)}</span>
         </div>
       </td>
+      <td class="td-muted" style="white-space:nowrap" title="${r.sprint||'Sem sprint'}">${sprintCurto(r.sprint)}</td>
       <td class="td-muted">${mesLabel(r.mes)}</td>
     </tr>
-  `).join('');
+  `).join('') : `<tr><td colspan="12" class="td-muted">Nenhum card encontrado.</td></tr>`;
+}
+
+// ── CARDS: sprints e pendências ──
+function buildCardsPanel(d) {
+  // Cards por Sprint — empilhado Encerrados × Em aberto, sprints em ordem cronológica
+  const sprints = SPRINT_ORDEM.filter(s=>d.some(x=>x.sprint===s));
+  const enc = sprints.map(s=>d.filter(x=>x.sprint===s && x.status==='Encerrado').length);
+  const abe = sprints.map(s=>d.filter(x=>x.sprint===s && x.status!=='Encerrado').length);
+  if(charts.cSprint) charts.cSprint.destroy();
+  const el = document.getElementById('cSprint');
+  if(el) charts.cSprint = new Chart(el, {
+    type:'bar',
+    data:{labels:sprints.map(sprintCurto), datasets:[
+      {label:'Encerrados', data:enc, backgroundColor:STATUS_COLORS['Encerrado'], borderRadius:4, borderSkipped:false},
+      {label:'Em aberto', data:abe, backgroundColor:'#c9821f', borderRadius:4, borderSkipped:false,
+       borderWidth:{bottom:2}, borderColor:'#19222c'},
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false, animation:{duration:400},
+      plugins:{
+        legend:{display:true, position:'bottom', labels:{boxWidth:9,padding:14,font:{size:11,family:'Outfit'},color:'#aab2bd'}},
+        tooltip:{...TT, callbacks:{
+          title:items=>sprints[items[0].dataIndex] || 'Sem sprint',
+          footer:items=>{ const i=items[0].dataIndex; return `Total: ${enc[i]+abe[i]} cards`; }
+        }}
+      },
+      scales:{ x:{...SCALES.x, stacked:true}, y:{...SCALES.y, stacked:true, ticks:{...SCALES.y.ticks, precision:0}} },
+    }
+  });
+
+  // Cards em Aberto — tudo que não está Encerrado, do mais antigo para o mais recente.
+  // "Dias em aberto" é só exibição (hoje − abertura); não altera sla_h nem tempo_total_h.
+  const hoje = Date.now();
+  const abertos = d.filter(x=>x.status!=='Encerrado')
+    .map(x=>({...x, dias:Math.floor((hoje-new Date(x.abertura))/86400000)}))
+    .sort((a,b)=>b.dias-a.dias);
+  document.getElementById('abertoSub').textContent = abertos.length
+    ? `${abertos.length} card${abertos.length!==1?'s':''} não encerrado${abertos.length!==1?'s':''} · destaque acima de 7 e de 30 dias`
+    : '';
+  document.getElementById('abertoList').innerHTML = abertos.length ? abertos.map(r=>`
+    <div class="detail-row">
+      <div class="detail-head">
+        <span class="td-mono" style="font-size:11px">${r.id}</span>
+        <span class="chip ${r.dias>30?'chip-critical':r.dias>7?'chip-warn':'chip-muted'}">${r.dias} dia${r.dias!==1?'s':''}</span>
+      </div>
+      <div class="detail-head" style="margin-bottom:0">
+        <span class="td-ellipsis td-muted" style="font-size:11px" title="${r.assunto}">${r.assunto}</span>
+        ${stChip(r.status)}
+      </div>
+    </div>
+  `).join('') : `<div class="metric-desc">Nenhum card em aberto no filtro atual.</div>`;
 }
 
 // ── SLA ──
@@ -1006,6 +1104,7 @@ function goSection(id) {
 populateFilters();
 renderMonthTabs();
 renderCompareTabs();
+document.querySelectorAll('#tCards th[data-sort]').forEach(th=>th.onclick=()=>sortTable(th.dataset.sort));
 rebuildAll();
 </script>
 </body>
