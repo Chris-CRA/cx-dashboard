@@ -173,7 +173,7 @@ body {
 .duo { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
 
 /* ── COMPARE (Por Mês) ── */
-.compare-wrap { display: grid; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); }
+.compare-wrap { display: grid; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow-x: auto; background: var(--surface); }
 .compare-col { padding: 22px 24px; border-left: 1px solid var(--border); }
 .compare-col:first-child { border-left: none; }
 .compare-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
@@ -357,6 +357,14 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
     <div class="section-head">
       <div><div class="section-eyebrow">Comparativo</div><div class="section-title">Mês a Mês</div></div>
+      <div class="filter-group">
+        <div class="period-group" id="compareMeses" style="gap:6px">
+          <!-- Botões de mês injetados dinamicamente por renderCompareTabs() -->
+        </div>
+        <button class="tag-btn" onclick="setCompareMeses('last3')">Últimos 3</button>
+        <button class="tag-btn" onclick="setCompareMeses('all')">Todos</button>
+        <button class="tag-btn" onclick="setCompareMeses('extremos')">Início × último fechado</button>
+      </div>
     </div>
     <div id="compareBody"></div>
   </div>
@@ -588,6 +596,46 @@ function renderMonthTabs() {
   });
 }
 
+// ── COMPARATIVO MÊS A MÊS: seleção de meses ──
+// A seleção fica nos próprios botões (#compareMeses .tag-btn.on), sem estado global novo.
+// Padrão: os mesmos 3 últimos meses da Visão Geral (LAST3_MESES).
+function renderCompareTabs() {
+  const box = document.getElementById('compareMeses');
+  box.innerHTML = '';
+  [...new Set(RAW.map(d=>d.mes))].sort().forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'tag-btn' + (LAST3_MESES.includes(m) ? ' on' : '');
+    btn.dataset.mes = m;
+    btn.textContent = mesLabel(m);
+    btn.onclick = () => toggleCompareMes(m);
+    box.appendChild(btn);
+  });
+}
+const compareSel = () => [...document.querySelectorAll('#compareMeses .tag-btn.on')].map(b=>b.dataset.mes);
+const markCompareMeses = sel => document.querySelectorAll('#compareMeses .tag-btn')
+  .forEach(b=>b.classList.toggle('on', sel.includes(b.dataset.mes)));
+function toggleCompareMes(m) {
+  const btn = document.querySelector(`#compareMeses .tag-btn[data-mes="${m}"]`);
+  if(btn.classList.contains('on') && compareSel().length===1) return; // mínimo de 1 mês marcado
+  btn.classList.toggle('on');
+  applyFilters();
+}
+function setCompareMeses(preset) {
+  const months = [...new Set(RAW.map(d=>d.mes))].sort();
+  let sel = LAST3_MESES;
+  if(preset==='all') sel = months;
+  if(preset==='extremos') {
+    // Primeiro mês com dados × último mês já encerrado no calendário (anterior ao mês atual)
+    const hoje = new Date();
+    const atual = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+    const fechados = months.filter(m=>m<atual);
+    const fim = fechados.length ? fechados[fechados.length-1] : months[months.length-1];
+    sel = [...new Set([months[0], fim])];
+  }
+  markCompareMeses(sel);
+  applyFilters();
+}
+
 // ── FILTERS ──
 function toggleTag(btnId, key) {
   tags[key] = !tags[key];
@@ -601,6 +649,7 @@ function resetAll() {
   document.getElementById('fTipo').value='';
   document.getElementById('fSprint').value='';
   ['fJira','fN3','fRec','fIndev'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  markCompareMeses(LAST3_MESES);
   document.querySelectorAll('.period-btn').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-all').classList.add('active');
   applyFilters();
@@ -743,7 +792,31 @@ function buildMensalSection(d) {
 
   // Compare body
   const compareBody = document.getElementById('compareBody');
-  const mkMonthSummary = (data, label) => {
+  // Variação em relação a outro mês (usada quando exatamente 2 meses estão selecionados)
+  const sgn = (v,dec,suf='') => `${v>=0?'+':'−'}${Math.abs(v).toFixed(dec)}${suf}`;
+  const mkDelta = (data, base) => {
+    if(!base || !base.data.length) return '';
+    const b = base.data;
+    const pct = b.length ? sgn((data.length-b.length)/b.length*100,0,'%') : '—';
+    const [slaA, slaB] = [avg(data,'sla_h'), avg(b,'sla_h')];
+    const [seA, seB] = [Math.round(cnt(data,'resolvido_se','Sim')/data.length*100), Math.round(cnt(b,'resolvido_se','Sim')/b.length*100)];
+    const [jA, jB] = [data.filter(x=>x.tem_jira).length, b.filter(x=>x.tem_jira).length];
+    const rows = [
+      ['Cards', `${b.length} → ${data.length} (${pct})`],
+      ['SLA Médio', `${slaB.toFixed(2)}h → ${slaA.toFixed(2)}h (${sgn(slaA-slaB,2,'h')})`],
+      ['Resolv. SE', `${seB}% → ${seA}% (${sgn(seA-seB,0,' p.p.')})`],
+      ['Jiras', `${jB} → ${jA} (${sgn(jA-jB,0)})`],
+    ];
+    return `
+      <div class="compare-stats" style="flex-direction:column;gap:8px">
+        <span class="compare-stat"><span>Variação vs ${mesLabel(base.mes)}</span></span>
+        ${rows.map(([l,v])=>`
+          <div class="metric-item-head" style="margin-bottom:0">
+            <span class="metric-item-lbl">${l}</span><span class="metric-item-val">${v}</span>
+          </div>`).join('')}
+      </div>`;
+  };
+  const mkMonthSummary = (data, label, base) => {
     if(!data.length) return `
       <div class="compare-col">
         <div class="compare-head"><span class="compare-month">${label}</span></div>
@@ -774,10 +847,16 @@ function buildMensalSection(d) {
             ['Jiras',`${data.filter(x=>x.tem_jira).length}`],
           ].map(([l,v])=>`<div class="compare-stat"><b>${v}</b><span>${l}</span></div>`).join('')}
         </div>
+        ${mkDelta(data, base)}
       </div>
     `;
   };
-  compareBody.innerHTML = `<div class="compare-wrap" style="grid-template-columns:repeat(${months.length},1fr)">${months.map(m=>mkMonthSummary(RAW.filter(x=>x.mes===m),mesNomeCompleto(m))).join('')}</div>`;
+  // Só os meses marcados no seletor; até 4 lado a lado, acima disso largura mínima + rolagem horizontal
+  const sel = compareSel();
+  const selMonths = months.filter(m=>sel.includes(m));
+  const cols = selMonths.length<=4 ? `repeat(${selMonths.length},1fr)` : `repeat(${selMonths.length},minmax(280px,1fr))`;
+  const base = selMonths.length===2 ? {mes:selMonths[0], data:RAW.filter(x=>x.mes===selMonths[0])} : null;
+  compareBody.innerHTML = `<div class="compare-wrap" style="grid-template-columns:${cols}">${selMonths.map((m,i)=>mkMonthSummary(RAW.filter(x=>x.mes===m),mesNomeCompleto(m),i===1?base:null)).join('')}</div>`;
 }
 
 // ── TABLE ──
@@ -926,6 +1005,7 @@ function goSection(id) {
 // ── INIT ──
 populateFilters();
 renderMonthTabs();
+renderCompareTabs();
 rebuildAll();
 </script>
 </body>
