@@ -25,25 +25,26 @@ const mesNomeCompleto = m => { const [y,mm]=m.split('-'); const nome=MES_PT[+mm-
 // ── SEMANTIC COLOR MAP (categoria/status/tipo) ──
 const CAT_COLORS = { Bug:'#dd6478', Usabilidade:'#968bf4', Performance:'#c9821f', 'Autenticação':'#4f8fe0' };
 const catColor = cat => CAT_COLORS[cat] || '#6f7885';
-const STATUS_COLORS = { 'Encerrado':'#14a98d', 'Em andamento':'#968bf4', 'Aguardando N3':'#4f8fe0' };
-const statusColor = s => STATUS_COLORS[s] || '#c9821f';
-const TIPO_COLORS = { 'Dúvida':'#968bf4', 'Configuração':'#14a98d', 'Bug':'#c9678f', 'Melhoria':'#c9821f', 'Solicitação':'#4f8fe0' };
+// Verde = encerrado · âmbar = em andamento com o time · azul = com N3 · cinza = aguardando cliente
+const STATUS_COLORS = { 'Encerrado':'#14a98d', 'Em andamento':'#c9821f', 'Aguardando N3':'#4f8fe0' };
+const statusColor = s => STATUS_COLORS[s] || '#8a93a0';
+const TIPO_COLORS = { 'Dúvida':'#968bf4', 'Configuração':'#14a98d', 'Bug':'#dd6478', 'Melhoria':'#c9821f', 'Solicitação':'#4f8fe0' };
 const tipoColor = tp => TIPO_COLORS[tp] || '#6f7885';
 
 // ── CHART DEFAULTS ──
-Chart.defaults.color = '#6f7885';
-Chart.defaults.borderColor = 'rgba(255,255,255,0.08)';
+Chart.defaults.color = '#8a93a0';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.10)';
 Chart.defaults.font.family = "'Outfit', system-ui, sans-serif";
 Chart.defaults.font.size = 11;
 
 const TT = {
-  backgroundColor:'#19222c', borderColor:'rgba(255,255,255,0.08)', borderWidth:1,
+  backgroundColor:'#131922', borderColor:'rgba(255,255,255,0.10)', borderWidth:1,
   padding:10, cornerRadius:8, titleFont:{size:11,weight:'700',family:'Outfit'},
   bodyFont:{size:11,family:'Outfit'}, titleColor:'#eef1f4', bodyColor:'#aab2bd',
 };
 const SCALES = {
-  x:{grid:{display:false},ticks:{color:'#6f7885',font:{size:10,family:'Outfit'}}},
-  y:{grid:{color:'rgba(255,255,255,0.08)'},ticks:{color:'#6f7885',font:{size:10,family:'Outfit'}},beginAtZero:true}
+  x:{grid:{display:false},ticks:{color:'#8a93a0',font:{size:11,family:'Outfit'}}},
+  y:{grid:{color:'rgba(255,255,255,0.10)'},ticks:{color:'#8a93a0',font:{size:11,family:'Outfit'}},beginAtZero:true}
 };
 
 function mkChart(id,type,labels,data,opts={}) {
@@ -70,7 +71,7 @@ const catChip = cat => {
   return `<span class="chip ${m[cat]||'chip-muted'}">${cat}</span>`;
 };
 const stChip = s => {
-  const m={Encerrado:'chip-good','Aguardando cliente':'chip-warn','Em andamento':'chip-violet','Respondido / Aguardando retorno':'chip-warn','Aguardando N3':'chip-info'};
+  const m={Encerrado:'chip-good','Aguardando cliente':'chip-muted','Em andamento':'chip-warn','Respondido / Aguardando retorno':'chip-muted','Aguardando N3':'chip-info'};
   return `<span class="chip ${m[s]||'chip-muted'}">${s}</span>`;
 };
 const yn = (v,on='chip-good',off='chip-muted') => v==='Sim'?`<span class="chip ${on}">Sim</span>`:`<span class="chip ${off}">—</span>`;

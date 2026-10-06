@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/styles.css?v=20261006">
+<link rel="stylesheet" href="css/styles.css?v=20261006b">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
   <div class="topnav-inner">
     <div class="brand">
       <img src="assets/Screenshot.jpg" alt="Memed" class="brand-logo">
-      <div class="brand-word">Support CX<span>Dashboard</span></div>
+      <div class="brand-word">Support CX<span>Dashboard Executivo</span></div>
     </div>
     <nav class="tabs">
       <button class="tab active" onclick="goSection('overview')">Visão Geral</button>
@@ -26,7 +26,7 @@
     </nav>
     <div class="topnav-right">
       <span class="count-ghost"><b id="countPill">—</b> <span id="countPillLabel">cards · histórico completo</span></span>
-      <div class="avatar">C</div>
+      <span class="stamp" id="dataStamp">—</span>
     </div>
   </div>
   <div class="filterline">
@@ -39,12 +39,12 @@
       <select class="filter-sel" id="fStatus" onchange="applyFilters()"><option value="">Status</option></select>
       <select class="filter-sel" id="fTipo" onchange="applyFilters()"><option value="">Tipo</option></select>
       <select class="filter-sel" id="fSprint" onchange="applyFilters()"><option value="">Sprint</option></select>
-      <button class="tag-btn" id="fJira"  onclick="toggleTag('fJira','jira')">🔗 Com Jira</button>
-      <button class="tag-btn" id="fN3"    onclick="toggleTag('fN3','n3')">↑ N3</button>
-      <button class="tag-btn" id="fRec"   onclick="toggleTag('fRec','rec')">🔄 Recorrente</button>
-      <button class="tag-btn" id="fIndev" onclick="toggleTag('fIndev','indev')">⚠ Indevido</button>
+      <button class="tag-btn" id="fJira"  onclick="toggleTag('fJira','jira')">Com Jira</button>
+      <button class="tag-btn" id="fN3"    onclick="toggleTag('fN3','n3')">N3</button>
+      <button class="tag-btn" id="fRec"   onclick="toggleTag('fRec','rec')">Recorrente</button>
+      <button class="tag-btn" id="fIndev" onclick="toggleTag('fIndev','indev')">Indevido</button>
     </div>
-    <span class="reset-ghost" onclick="resetAll()">↺ Limpar</span>
+    <span class="reset-ghost" onclick="resetAll()">Limpar filtros</span>
   </div>
 </div>
 
@@ -172,7 +172,7 @@
       <div class="tile-eyebrow">Card a card</div><div class="tile-title">Detalhe Comparativo de SLA e Tempo Total</div>
       <div style="margin-top:14px"><div class="detail-list" id="slaDetail"></div></div>
     </div>
-    <div class="section-head"><div><div class="section-eyebrow">Realocado de Insights</div><div class="section-title">Qualidade & Apoio Externo</div></div></div>
+    <div class="section-head"><div><div class="section-eyebrow">Qualidade</div><div class="section-title">Qualidade & Apoio Externo</div></div></div>
     <div class="split">
       <div class="split-col">
         <div class="split-title">Apoio de Times Externos</div>
@@ -188,8 +188,8 @@
 </div>
 
 <script src="js/data.js?v=20261006"></script>
-<script src="js/helpers.js?v=20261006"></script>
-<script src="js/sections.js?v=20261006"></script>
-<script src="js/app.js?v=20261006"></script>
+<script src="js/helpers.js?v=20261006b"></script>
+<script src="js/sections.js?v=20261006b"></script>
+<script src="js/app.js?v=20261006b"></script>
 </body>
 </html>

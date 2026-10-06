@@ -37,6 +37,12 @@ function renderMonthTabs() {
   });
 }
 
+// "Dados até DD/MM/AAAA": data do registro mais recente do RAW (abertura, respostas ou encerramento)
+function renderDataStamp() {
+  const ult = RAW.flatMap(d=>[d.abertura,d.primeira_resp,d.ultima_resp,d.encerr_jira]).filter(Boolean).sort().pop();
+  document.getElementById('dataStamp').textContent = ult ? `Dados até ${ult.slice(8,10)}/${ult.slice(5,7)}/${ult.slice(0,4)}` : '';
+}
+
 // ── COMPARATIVO MÊS A MÊS: seleção de meses ──
 // A seleção fica nos próprios botões (#compareMeses .tag-btn.on), sem estado global novo.
 // Padrão: os mesmos 3 últimos meses da Visão Geral (LAST3_MESES).
@@ -169,6 +175,7 @@ function goSection(id) {
 
 // ── INIT ──
 populateFilters();
+renderDataStamp();
 renderMonthTabs();
 renderCompareTabs();
 document.querySelectorAll('#tCards th[data-sort]').forEach(th=>th.onclick=()=>sortTable(th.dataset.sort));

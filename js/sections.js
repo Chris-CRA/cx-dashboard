@@ -200,7 +200,7 @@ function buildCardsPanel(d) {
     data:{labels:sprints.map(sprintCurto), datasets:[
       {label:'Encerrados', data:enc, backgroundColor:STATUS_COLORS['Encerrado'], borderRadius:4, borderSkipped:false},
       {label:'Em aberto', data:abe, backgroundColor:'#c9821f', borderRadius:4, borderSkipped:false,
-       borderWidth:{bottom:2}, borderColor:'#19222c'},
+       borderWidth:{bottom:2}, borderColor:'#131922'},
     ]},
     options:{
       responsive:true, maintainAspectRatio:false, animation:{duration:400},
