@@ -147,9 +147,11 @@ function rebuildAll() {
   document.getElementById('countPill').textContent = d.length;
   document.getElementById('countPillLabel').textContent = temFiltro ? `de ${RAW.length} cards` : 'cards · histórico completo';
   const overviewData = d.filter(x=>LAST3_MESES.includes(x.mes));
-  buildKpis(overviewData);
-  // Rótulos do total da Visão Geral: deixam explícito o recorte dos últimos 3 meses
+  // Setas de variação e destaques comparativos só fazem sentido sem filtro de mês/sprint
   const janela = curMes==='all' && !sprint;
+  buildKpis(overviewData, janela ? d : null);
+  buildDestaques(overviewData, d, janela);
+  // Rótulos do total da Visão Geral: deixam explícito o recorte dos últimos 3 meses
   const periodo = sprint ? sprint : curMes!=='all' ? mesNomeCompleto(curMes).toLowerCase() : janelaLabel();
   const complemento = overviewData.length!==d.length ? ` · de ${d.length} no histórico completo` : '';
   document.getElementById('heroEyebrow').textContent = janela ? 'Total de Cards · Últimos 3 meses' : 'Total de Cards';

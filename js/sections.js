@@ -1,35 +1,75 @@
 // Renderização das seções (build*): Visão Geral, Por Mês, Cards e SLA & Tempo.
 
-// ── KPIs (Visão Geral) ──
-function buildKpis(d) {
-  const total = d.length;
-  const seR   = cnt(d,'resolvido_se','Sim');
-  const n3    = cnt(d,'escalonado_n3','Sim');
-  const rec   = cnt(d,'recorrente','Sim');
-  const slaM  = avg(d,'sla_h');
-  const tM    = avg(d,'tempo_total_h');
-  const enc   = cnt(d,'status','Encerrado');
-  const pSe   = total?Math.round(seR/total*100):0;
-  const pEnc  = total?Math.round(enc/total*100):0;
+// Último mês fechado × mês anterior (setas de variação e destaques). null sem os dois meses.
+function mesesComparacao() {
+  const meses = [...new Set(RAW.map(x=>x.mes))].sort();
+  const ref = ultimoMesFechado(meses);
+  const base = ref ? meses[meses.indexOf(ref)-1] : null;
+  return ref && base ? {ref, base} : null;
+}
 
-  document.getElementById('heroFigure').textContent = total;
-  document.getElementById('statSecondary').innerHTML = `
-    <div class="stat-chip"><b>${pSe}%</b><span>Resolvidos pelo SE</span></div>
-    <div class="stat-chip"><b>${n3}</b><span>Escalonados N3</span></div>
-    <div class="stat-chip"><b>${rec}</b><span>Recorrentes</span></div>
-    <div class="stat-chip"><b>${slaM.toFixed(1)}h</b><span>SLA Médio 1ª Resp.</span></div>
-    <div class="stat-chip"><b>${tM.toFixed(1)}h</b><span>Tempo Médio Total</span></div>
-    <div class="stat-chip"><b>${pEnc}%</b><span>Taxa de Encerramento</span></div>
-  `;
+// ── KPIs (Visão Geral) ──
+// hist = dados filtrados do histórico completo, usado só para a variação; null esconde as setas.
+function buildKpis(d, hist) {
+  document.getElementById('heroFigure').textContent = d.length;
+  const cmp = hist ? mesesComparacao() : null;
+  const ref = cmp ? hist.filter(x=>x.mes===cmp.ref) : [];
+  const base = cmp ? hist.filter(x=>x.mes===cmp.base) : [];
+  const delta = (fn, suf, maiorMelhor) => {
+    if(!ref.length || !base.length) return '';
+    const v = fn(ref)-fn(base);
+    const cls = v===0 ? 'flat' : (v>0)===maiorMelhor ? 'good' : 'bad';
+    const txt = v===0 ? '=' : `${v>0?'▲':'▼'} ${Math.abs(v)}${suf}`;
+    return `<span class="stat-delta ${cls}" title="${mesNomeCompleto(cmp.ref)} comparado a ${mesNomeCompleto(cmp.base)}">${txt} ${mesCurto(cmp.ref)} vs ${mesCurto(cmp.base)}</span>`;
+  };
+  document.getElementById('statSecondary').innerHTML = [
+    [`${pct(d,'sla_cumprido','Sim')}%`, 'SLA cumprido', delta(a=>pct(a,'sla_cumprido','Sim'),' p.p.',true)],
+    [`${pct(d,'status','Encerrado')}%`, 'Taxa de encerramento', delta(a=>pct(a,'status','Encerrado'),' p.p.',true)],
+    [`${pct(d,'resolvido_se','Sim')}%`, 'Resolvidos pelo SE', delta(a=>pct(a,'resolvido_se','Sim'),' p.p.',true)],
+    [cnt(d,'escalonado_n3','Sim'), 'Escalonados N3', delta(a=>cnt(a,'escalonado_n3','Sim'),'',false)],
+  ].map(([v,l,dl])=>`<div class="stat-chip"><b>${v}</b><span>${l}</span>${dl}</div>`).join('');
+}
+
+// ── DESTAQUES DO PERÍODO (Visão Geral) ──
+// Frases geradas dos próprios dados. d = recorte da Visão Geral; hist = filtrados no histórico.
+function buildDestaques(d, hist, comparar) {
+  const el = document.getElementById('destaques');
+  if(!d.length) { el.innerHTML = '<li>Nenhum card no filtro atual.</li>'; return; }
+  const itens = [];
+  const [mot, qtd] = freq(d,'motivo')[0];
+  itens.push(['var(--violet)', `<strong>${motivoLabel(mot)}</strong> é o principal motivo de contato: ${qtd} de ${d.length} cards (${Math.round(qtd/d.length*100)}%).`]);
+  const pSla = pct(d,'sla_cumprido','Sim');
+  itens.push([pSla===100?'var(--good)':'var(--warn)', `<strong>${pSla}%</strong> dos cards tiveram a 1ª resposta dentro da meta de ${META_SLA_H}h úteis.`]);
+  const cmp = comparar ? mesesComparacao() : null;
+  const ref = cmp ? hist.filter(x=>x.mes===cmp.ref) : [], base = cmp ? hist.filter(x=>x.mes===cmp.base) : [];
+  if(ref.length && base.length) {
+    const [pb, pr] = [pct(base,'resolvido_se','Sim'), pct(ref,'resolvido_se','Sim')];
+    const [nb, nr] = [MES_PT[+cmp.base.split('-')[1]-1], MES_PT[+cmp.ref.split('-')[1]-1]];
+    itens.push([pr>=pb?'var(--good)':'var(--warn)', pr===pb
+      ? `A resolução direta pelo SE se manteve em <strong>${pr}%</strong> em ${nr}.`
+      : `A resolução direta pelo SE ${pr>pb?'subiu':'caiu'} de <strong>${pb}%</strong> em ${nb} para <strong>${pr}%</strong> em ${nr}.`]);
+  }
+  const abertos = hist.filter(x=>x.status!=='Encerrado');
+  const antigos = abertos.filter(x=>diasAberto(x)>30).length;
+  itens.push([abertos.length?'var(--warn)':'var(--good)', abertos.length
+    ? `<strong>${abertos.length} card${abertos.length!==1?'s':''} em aberto</strong>${antigos?`, ${antigos} há mais de 30 dias`:''}.`
+    : 'Nenhum card em aberto.']);
+  el.innerHTML = itens.map(([cor,txt])=>`<li style="--dot:${cor}"><span>${txt}</span></li>`).join('');
 }
 
 // ── OVERVIEW CHARTS ──
+// Lista de barras horizontais (categoria/motivo): largura relativa ao maior, % sobre o total.
+const listaBarras = (pares, total, cor) => pares.length ? `<div class="metric-list">${pares.map(([k,v],i)=>`
+    <div class="metric-item">
+      <div class="metric-item-head">
+        <span class="metric-item-lbl">${k}</span>
+        <span class="metric-item-val">${v}<span> (${Math.round(v/total*100)}%)</span></span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${v/pares[0][1]*100}%;background:${cor(k,i)}"></div></div>
+    </div>`).join('')}</div>` : `<div class="metric-desc">Nenhum card no filtro atual.</div>`;
+
 function buildOverviewCharts(d) {
-  const catF = freq(d,'categoria');
-  mkChart('cCat','bar',catF.map(x=>x[0]),catF.map(x=>x[1]),{
-    backgroundColor:catF.map(x=>catColor(x[0])), borderRadius:7, borderSkipped:false,
-    ttCb:{label:c=>`${c.raw} card${c.raw!==1?'s':''}`}
-  });
+  document.getElementById('catList').innerHTML = listaBarras(freq(d,'categoria'), d.length, k=>catColor(k));
 
   const stF = freq(d,'status');
   mkChart('cStatus','doughnut',stF.map(x=>x[0]),stF.map(x=>x[1]),{
@@ -41,16 +81,18 @@ function buildOverviewCharts(d) {
     backgroundColor:tpF.map(x=>tipoColor(x[0])), borderWidth:0, legend:true, hoverOffset:6, cutout:'64%'
   });
 
-  const motF = freq(d,'motivo').slice(0,6);
-  mkChart('cMotivo','bar',motF.map(x=>x[0].replace(/-/g,' ')),motF.map(x=>x[1]),{
-    backgroundColor:'#7c72e8', borderRadius:6
-  });
+  // Só o motivo principal em violeta; os demais em cinza neutro
+  const motF = freq(d,'motivo').slice(0,6).map(([k,v])=>[motivoLabel(k),v]);
+  document.getElementById('motivoList').innerHTML = listaBarras(motF, d.length, (k,i)=>i===0?'var(--violet)':'#3a4452');
 }
 
 // ── MENSAL ──
 function buildMensalSection(d) {
   const months = [...new Set(RAW.map(x=>x.mes))].sort();
-  const mLabels = months.map(mesLabel);
+  // Meses parciais com rótulo "*" e cor translúcida; último mês fechado em destaque
+  const parcial = months.map(mesParcial);
+  const refMes = ultimoMesFechado(months);
+  const mLabels = months.map((m,i)=>mesLabel(m)+(parcial[i]?'*':''));
   const mCounts = months.map(m=>RAW.filter(x=>x.mes===m).length);
   const mSla = months.map(m=>{
     const v=RAW.filter(x=>x.mes===m&&x.sla_h!=null).map(x=>x.sla_h);
@@ -58,14 +100,19 @@ function buildMensalSection(d) {
   });
 
   mkChart('cMensal','bar',mLabels,mCounts,{
-    backgroundColor:'#968bf4', borderRadius:8, borderSkipped:false,
-    ttCb:{label:c=>`${c.raw} cards`}
+    backgroundColor:months.map((m,i)=>parcial[i]?'rgba(150,139,244,0.35)':m===refMes?'#968bf4':'#3a4452'),
+    borderRadius:8, borderSkipped:false,
+    ttCb:{label:c=>`${c.raw} cards${parcial[c.dataIndex]?' (mês parcial)':''}`}
   });
 
   mkChart('cSlaMensal','bar',mLabels,mSla,{
-    backgroundColor:'#14a98d', borderRadius:8, borderSkipped:false,
-    ttCb:{label:c=>`${c.raw.toFixed(2)}h`}
+    backgroundColor:months.map((m,i)=>parcial[i]?'rgba(20,169,141,0.35)':'#14a98d'),
+    borderRadius:8, borderSkipped:false,
+    ttCb:{label:c=>`${c.raw.toFixed(2)}h${parcial[c.dataIndex]?' (mês parcial)':''}`}
   });
+  document.getElementById('mensalNota').textContent = parcial.some(Boolean)
+    ? `* Mês parcial (início da base ou mês em andamento).${refMes?` Em destaque: ${mesNomeCompleto(refMes).toLowerCase()}, último mês fechado.`:''}`
+    : '';
 
   // Compare body
   const compareBody = document.getElementById('compareBody');
@@ -217,9 +264,8 @@ function buildCardsPanel(d) {
 
   // Cards em Aberto — tudo que não está Encerrado, do mais antigo para o mais recente.
   // "Dias em aberto" é só exibição (hoje − abertura); não altera sla_h nem tempo_total_h.
-  const hoje = Date.now();
   const abertos = d.filter(x=>x.status!=='Encerrado')
-    .map(x=>({...x, dias:Math.floor((hoje-new Date(x.abertura))/86400000)}))
+    .map(x=>({...x, dias:diasAberto(x)}))
     .sort((a,b)=>b.dias-a.dias);
   document.getElementById('abertoSub').textContent = abertos.length
     ? `${abertos.length} card${abertos.length!==1?'s':''} não encerrado${abertos.length!==1?'s':''} · destaque acima de 7 e de 30 dias`
@@ -259,7 +305,7 @@ function buildSla(d) {
     <div class="cell">
       <div class="cell-eyebrow">Tempo Médio Total</div>
       <div class="cell-val">${tM.toFixed(1)}<small>h</small></div>
-      <div class="cell-foot">Da abertura à última resposta</div>
+      <div class="cell-foot">Mediana ${mediana(d,'tempo_total_h').toFixed(1)}h · da abertura à última resposta</div>
     </div>
     <div class="cell">
       <div class="cell-eyebrow">Pior Caso SLA</div>
@@ -268,16 +314,47 @@ function buildSla(d) {
     </div>
   `;
 
-  const labels = d.map(x=>x.id.replace('CXATEND-','#'));
-  mkChart('cSlaBar','bar',labels,d.map(x=>x.sla_h),{
-    backgroundColor:d.map(x=>slaOk(x)?'#14a98d':'#c9821f'),
-    borderRadius:5, borderSkipped:false,
-    ttCb:{label:c=>`${c.raw.toFixed(2)}h`}
-  });
-  mkChart('cTempoBar','bar',labels,d.map(x=>x.tempo_total_h),{
-    backgroundColor:'#7c72e8',
-    ttCb:{label:c=>`${c.raw!=null?c.raw.toFixed(2):'—'}h`}
-  });
+  // Faixas de 1ª resposta (horas úteis, valor da planilha). Só agrupam para exibição:
+  // se o SLA foi cumprido continua vindo de sla_cumprido.
+  const comSla = d.filter(x=>x.sla_h!=null);
+  const faixas = [
+    ['Até 4h', x=>x.sla_h<=4, 'var(--good)'],
+    ['De 4h a 8h', x=>x.sla_h>4 && x.sla_h<=8, 'rgba(20,169,141,0.7)'],
+    [`De 8h a ${META_SLA_H}h`, x=>x.sla_h>8 && x.sla_h<=META_SLA_H, 'rgba(20,169,141,0.45)'],
+    [`Acima de ${META_SLA_H}h`, x=>x.sla_h>META_SLA_H, 'var(--critical)'],
+  ];
+  const top5 = k => d.filter(x=>x[k]!=null).sort((a,b)=>b[k]-a[k]).slice(0,5);
+  const topList = (rows,k) => rows.length ? `<div class="detail-list">${rows.map(r=>`
+    <div class="detail-row">
+      <div class="detail-head" style="margin-bottom:0">
+        <span class="td-mono" style="font-size:11px">${r.id}</span>
+        <span class="td-ellipsis td-muted" style="font-size:11px;flex:1" title="${r.assunto}">${r.assunto}</span>
+        <span class="detail-num">${fmtH(r[k])}</span>
+      </div>
+    </div>`).join('')}</div>` : `<div class="metric-desc">Sem dados no filtro atual.</div>`;
+  document.getElementById('slaFaixas').innerHTML = `
+    <div class="metric-list">${faixas.map(([l,f,c])=>{ const v=comSla.filter(f).length; return `
+      <div class="metric-item">
+        <div class="metric-item-head">
+          <span class="metric-item-lbl">${l}</span>
+          <span class="metric-item-val">${v}<span> (${comSla.length?Math.round(v/comSla.length*100):0}%)</span></span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${comSla.length?v/comSla.length*100:0}%;background:${c}"></div></div>
+      </div>`; }).join('')}</div>
+    <div class="split-title" style="margin:22px 0 10px">Maiores tempos de 1ª resposta</div>
+    ${topList(top5('sla_h'),'sla_h')}`;
+  const encerrados = d.filter(x=>x.tempo_total_h!=null);
+  document.getElementById('tempoTop').innerHTML = `
+    <div class="compare-stats" style="margin-top:0;padding-top:0;border-top:none">
+      <div class="compare-stat"><b>${mediana(d,'tempo_total_h').toFixed(1)}h</b><span>Mediana</span></div>
+      <div class="compare-stat"><b>${tM.toFixed(1)}h</b><span>Média</span></div>
+      <div class="compare-stat"><b>${encerrados.length}</b><span>Com tempo total</span></div>
+    </div>
+    <div class="metric-desc">A mediana não é distorcida por poucos casos muito longos.</div>
+    <div class="split-title" style="margin:22px 0 10px">Maiores tempos totais</div>
+    ${topList(top5('tempo_total_h'),'tempo_total_h')}
+    <div class="metric-desc" style="margin-top:10px">Cards em aberto não entram: o tempo total só existe após o encerramento.</div>`;
+  document.getElementById('slaDetailCount').textContent = `Ver todos (${d.length})`;
 
   const mx = d.length ? Math.max(...d.map(x=>Math.max(x.sla_h||0, x.tempo_total_h||0))) : 0;
   document.getElementById('slaDetail').innerHTML = d.map(r=>`

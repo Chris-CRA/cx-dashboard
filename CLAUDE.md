@@ -39,10 +39,10 @@ cx-dashboard/
 │   └── styles.css      # tema (:root) e todos os estilos
 ├── js/
 │   ├── data.js         # const RAW = [...] — única coisa que muda numa atualização de dados
-│   ├── helpers.js      # META_SLA_H, slaOk, avg, cnt, freq, fmtH, fmtDate, mesLabel,
-│   │                   # cores (CAT/STATUS/TIPO_COLORS), defaults do Chart.js, mkChart,
-│   │                   # catChip/stChip/yn
-│   ├── sections.js     # build* de cada seção + tabela (sortTable, buildTable)
+│   ├── helpers.js      # META_SLA_H, slaOk, avg, cnt, freq, mediana, pct, fmtH, fmtDate,
+│   │                   # datas/meses, cores (CAT/STATUS/TIPO_COLORS), defaults do
+│   │                   # Chart.js, mkChart, catChip/stChip/yn
+│   ├── sections.js     # build* de cada seção (inclui buildDestaques) + tabela
 │   └── app.js          # estado global, LAST3_MESES, SPRINT_ORDEM, abas de mês,
 │                       # comparativo, filtros, rebuildAll, goSection, inicialização
 ├── assets/
@@ -83,10 +83,27 @@ HTML (`onclick="goSection(...)"`, `onchange="applyFilters()"`) dependem disso.
   - Comparativo Mês a Mês: `renderCompareTabs`, `toggleCompareMes`, `setCompareMeses`
     (estado guardado nos próprios botões, sem variável global nova).
   - Orquestração: `rebuildAll`. Navegação: `goSection`.
-- **`js/sections.js`**: `buildKpis`, `buildOverviewCharts`, `buildMensalSection`,
-  `buildTable` (busca e ordenação só de exibição; estado no próprio `<table>`),
-  `buildCardsPanel` (Cards por Sprint e Cards em Aberto), `buildSla` (inclui Apoio
-  Externo e Indicadores de Qualidade).
+  - `renderDataStamp`: "Dados até DD/MM/AAAA" no cabeçalho, calculado a partir do
+    registro mais recente do `RAW` (não há data manual para atualizar).
+- **`js/sections.js`**:
+  - `buildKpis(d, hist)`: faixa de destaque com o total e 4 indicadores (SLA cumprido,
+    taxa de encerramento, resolvidos pelo SE, escalonados N3). Cada um mostra a variação
+    do **último mês fechado** contra o mês anterior (`mesesComparacao`); as setas só
+    aparecem sem filtro de mês/sprint (`hist = null` esconde).
+  - `buildDestaques`: bloco "Destaques do período" com frases geradas dos dados
+    (principal motivo, % de SLA cumprido, evolução da resolução pelo SE, cards em aberto).
+  - `buildOverviewCharts`: Categoria e Motivos como listas de barras horizontais
+    (`listaBarras`, HTML) e Status/Tipo em rosca (Chart.js).
+  - `buildMensalSection`: meses parciais (1º mês da base ou mês em andamento) com `*` e
+    cor translúcida; último mês fechado em destaque.
+  - `buildTable` (busca e ordenação só de exibição; estado no próprio `<table>`),
+    `buildCardsPanel` (Cards por Sprint e Cards em Aberto).
+  - `buildSla`: SLA por faixa (até 4h · 4h–8h · 8h–24h · acima de 24h) com os 5 maiores
+    tempos de 1ª resposta, tempo total com mediana × média e os 5 maiores, detalhe card a
+    card recolhido em `<details>`, Apoio Externo e Indicadores de Qualidade.
+- **Helpers de exibição** (`js/helpers.js`): `mediana`, `pct`, `diasAberto`,
+  `motivoLabel`, `mesHoje`, `mesParcial`, `ultimoMesFechado`, `mesCurto`. São só de
+  apresentação; nenhum deles altera ou recalcula campos do `RAW`.
 
 ## Regras para Preservar a Arquitetura Atual
 
@@ -181,6 +198,11 @@ HTML (`onclick="goSection(...)"`, `onchange="applyFilters()"`) dependem disso.
   `js/helpers.js` (`CAT_COLORS`, `STATUS_COLORS`, `TIPO_COLORS`, `Chart.defaults`,
   `TT`, `SCALES`) e em alguns pontos de `js/sections.js`. Mudanças de tema/paleta
   precisam atualizar o CSS e esses pontos juntos.
+- **Convenções de cor do tema executivo**: cor semântica só onde há significado
+  (verde = encerrado/dentro da meta, âmbar = em andamento, azul = N3, cinza = aguardando
+  cliente, rosa = Bug/crítico); barras neutras em cinza (`#3a4452`) e violeta reservado
+  ao destaque (ex.: principal motivo, último mês fechado). Texto secundário
+  (`--ink-faint`) deve manter contraste mínimo de 4,5:1 sobre `--surface`.
 - Evitar duplicar regras CSS já existentes; reutilizar classes existentes (`.chip`,
   `.tile`, `.tab`, `.tag-btn`, etc.) em vez de criar novas equivalentes.
 - **JavaScript**: funções como `mkChart`, `avg`, `cnt`, `freq` são utilitários

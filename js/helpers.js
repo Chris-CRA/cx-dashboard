@@ -8,6 +8,11 @@ const slaOk = r => r.sla_cumprido!=='Não';
 const avg = (a, k) => { const v=a.filter(d=>d[k]!=null).map(d=>d[k]); return v.length? v.reduce((x,y)=>x+y,0)/v.length :0; };
 const cnt = (a,k,v) => a.filter(d=>d[k]===v).length;
 const freq = (a,k) => { const m={}; a.forEach(d=>{const v=d[k]; m[v]=(m[v]||0)+1;}); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };
+const mediana = (a,k) => { const v=a.filter(d=>d[k]!=null).map(d=>d[k]).sort((x,y)=>x-y); if(!v.length) return 0; const m=Math.floor(v.length/2); return v.length%2? v[m] : (v[m-1]+v[m])/2; };
+const pct = (a,k,v) => a.length ? Math.round(cnt(a,k,v)/a.length*100) : 0;
+const diasAberto = r => Math.floor((Date.now()-new Date(r.abertura))/86400000);
+// "opções-de-receituário" → "Opções de receituário" (só exibição)
+const motivoLabel = m => { const s=String(m).replace(/-/g,' '); return s.charAt(0).toUpperCase()+s.slice(1); };
 const fmtH = h => h==null?'—':`${h.toFixed(2)}h`;
 const fmtDate = ts => { if(!ts) return '—'; const d=new Date(ts); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`; };
 const MES_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
@@ -20,6 +25,11 @@ const janelaLabel = () => {
   const [yi, yf] = [ini.slice(0,4), fim.slice(0,4)];
   return yi===yf ? `${ab(ini)} – ${ab(fim)} ${yf}` : `${ab(ini)} ${yi} – ${ab(fim)} ${yf}`;
 };
+// Mês corrente do calendário ("YYYY-MM"); meses parciais = 1º mês da base ou mês ainda em andamento
+const mesHoje = () => { const h=new Date(); return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}`; };
+const mesParcial = m => m===[...new Set(RAW.map(d=>d.mes))].sort()[0] || m>=mesHoje();
+const ultimoMesFechado = meses => meses.filter(m=>m<mesHoje()).pop();
+const mesCurto = m => MES_PT_ABBR[+m.split('-')[1]-1].toLowerCase();
 const mesNomeCompleto = m => { const [y,mm]=m.split('-'); const nome=MES_PT[+mm-1]; return `${nome.charAt(0).toUpperCase()+nome.slice(1)} ${y}`; };
 
 // ── SEMANTIC COLOR MAP (categoria/status/tipo) ──

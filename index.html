@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/styles.css?v=20261006b">
+<link rel="stylesheet" href="css/styles.css?v=20261006c">
 </head>
 <body>
 
@@ -61,6 +61,11 @@
       <div class="stat-secondary" id="statSecondary"></div>
     </section>
 
+    <section class="highlights">
+      <div class="section-eyebrow">Destaques do período</div>
+      <ul id="destaques"></ul>
+    </section>
+
     <div class="section-head">
       <div>
         <div class="section-eyebrow">Panorama</div>
@@ -71,22 +76,22 @@
       <div class="tile bento-cat">
         <div class="tile-eyebrow">Categoria</div>
         <div class="tile-title">Distribuição por Categoria</div>
-        <div class="tile-chart"><canvas id="cCat"></canvas></div>
-      </div>
-      <div class="tile bento-status">
-        <div class="tile-eyebrow">Status</div>
-        <div class="tile-title">Situação Atual</div>
-        <div class="tile-chart"><canvas id="cStatus"></canvas></div>
-      </div>
-      <div class="tile bento-tipo">
-        <div class="tile-eyebrow">Tipo</div>
-        <div class="tile-title">Tipo de Demanda</div>
-        <div class="tile-chart"><canvas id="cTipo"></canvas></div>
+        <div class="tile-chart" id="catList"></div>
       </div>
       <div class="tile bento-motivo">
         <div class="tile-eyebrow">Motivos</div>
         <div class="tile-title">Motivos de Contato Mais Frequentes</div>
-        <div class="tile-chart"><canvas id="cMotivo"></canvas></div>
+        <div class="tile-chart" id="motivoList"></div>
+      </div>
+      <div class="tile bento-status">
+        <div class="tile-eyebrow">Status</div>
+        <div class="tile-title">Situação Atual</div>
+        <div class="tile-chart" style="min-height:220px"><canvas id="cStatus"></canvas></div>
+      </div>
+      <div class="tile bento-tipo">
+        <div class="tile-eyebrow">Tipo</div>
+        <div class="tile-title">Tipo de Demanda</div>
+        <div class="tile-chart" style="min-height:220px"><canvas id="cTipo"></canvas></div>
       </div>
     </div>
   </div>
@@ -106,6 +111,7 @@
         <div class="tile-chart" style="min-height:220px"><canvas id="cSlaMensal"></canvas></div>
       </div>
     </div>
+    <div class="section-sub" id="mensalNota"></div>
     <div class="section-head">
       <div><div class="section-eyebrow">Comparativo</div><div class="section-title">Mês a Mês</div></div>
       <div class="filter-group">
@@ -160,18 +166,21 @@
     <div class="stat-row" id="slaStatRow"></div>
     <div class="duo">
       <div class="tile">
-        <div class="tile-eyebrow">Meta 24h úteis</div><div class="tile-title">SLA 1ª Resposta por Card</div>
-        <div class="tile-chart" style="min-height:210px"><canvas id="cSlaBar"></canvas></div>
+        <div class="tile-eyebrow">Meta 24h úteis</div><div class="tile-title">SLA 1ª Resposta por Faixa</div>
+        <div class="tile-chart" id="slaFaixas"></div>
       </div>
       <div class="tile">
         <div class="tile-eyebrow">Ciclo completo</div><div class="tile-title">Tempo Total de Atendimento</div>
-        <div class="tile-chart" style="min-height:210px"><canvas id="cTempoBar"></canvas></div>
+        <div class="tile-chart" id="tempoTop"></div>
       </div>
     </div>
-    <div class="tile">
-      <div class="tile-eyebrow">Card a card</div><div class="tile-title">Detalhe Comparativo de SLA e Tempo Total</div>
+    <details class="tile">
+      <summary>
+        <div><div class="tile-eyebrow">Card a card</div><div class="tile-title">Detalhe Comparativo de SLA e Tempo Total</div></div>
+        <span class="summary-hint" id="slaDetailCount">Ver todos</span>
+      </summary>
       <div style="margin-top:14px"><div class="detail-list" id="slaDetail"></div></div>
-    </div>
+    </details>
     <div class="section-head"><div><div class="section-eyebrow">Qualidade</div><div class="section-title">Qualidade & Apoio Externo</div></div></div>
     <div class="split">
       <div class="split-col">
@@ -188,8 +197,8 @@
 </div>
 
 <script src="js/data.js?v=20261006"></script>
-<script src="js/helpers.js?v=20261006b"></script>
-<script src="js/sections.js?v=20261006b"></script>
-<script src="js/app.js?v=20261006b"></script>
+<script src="js/helpers.js?v=20261006c"></script>
+<script src="js/sections.js?v=20261006c"></script>
+<script src="js/app.js?v=20261006c"></script>
 </body>
 </html>
