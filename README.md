@@ -22,6 +22,10 @@ sem backend, sem build e sem instalação.
 [Atualizar dados](#atualizando-os-dados) ·
 [Regras de SLA](#regras-de-sla)
 
+<br>
+
+<a href="https://chris-cra.github.io/cx-dashboard/"><img src="assets/dashCX.png" alt="Visão Geral do dashboard: total de cards, indicadores com variação mensal e destaques do período" width="900"></a>
+
 </div>
 
 ---
