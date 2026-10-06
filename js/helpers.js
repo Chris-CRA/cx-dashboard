@@ -1,6 +1,10 @@
 // Utilitários compartilhados: cálculos, formatação, cores, Chart.js e chips.
 
 // ── HELPERS ──
+// Meta de SLA da 1ª resposta: 24 horas úteis. Só para exibição (rótulos, escala das barras);
+// se o SLA foi cumprido vem sempre de `sla_cumprido`, calculado na planilha.
+const META_SLA_H = 24;
+const slaOk = r => r.sla_cumprido!=='Não';
 const avg = (a, k) => { const v=a.filter(d=>d[k]!=null).map(d=>d[k]); return v.length? v.reduce((x,y)=>x+y,0)/v.length :0; };
 const cnt = (a,k,v) => a.filter(d=>d[k]===v).length;
 const freq = (a,k) => { const m={}; a.forEach(d=>{const v=d[k]; m[v]=(m[v]||0)+1;}); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };

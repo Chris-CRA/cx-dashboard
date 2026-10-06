@@ -177,7 +177,7 @@ function buildTable(d) {
       <td>${yn(r.indevido,'chip-warn')}</td>
       <td>
         <div style="display:flex;align-items:center;gap:8px">
-          <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,r.sla_h/8*100)}%;background:${r.sla_h<=4?'var(--good)':'var(--warn)'}"></div></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,r.sla_h/META_SLA_H*100)}%;background:${slaOk(r)?'var(--good)':'var(--warn)'}"></div></div>
           <span class="detail-num">${fmtH(r.sla_h)}</span>
         </div>
       </td>
@@ -249,7 +249,7 @@ function buildSla(d) {
     <div class="cell">
       <div class="cell-eyebrow">SLA Médio 1ª Resp.</div>
       <div class="cell-val">${slaM.toFixed(2)}<small>h</small></div>
-      <div class="cell-foot">${slaM<=4?'<strong>Meta atingida</strong>':'<span class="flag">Acima da meta</span>'}</div>
+      <div class="cell-foot">${slaM<=META_SLA_H?'<strong>Meta atingida</strong>':'<span class="flag">Acima da meta</span>'} · meta ${META_SLA_H}h úteis</div>
     </div>
     <div class="cell">
       <div class="cell-eyebrow">SLAs Cumpridos</div>
@@ -270,7 +270,7 @@ function buildSla(d) {
 
   const labels = d.map(x=>x.id.replace('CXATEND-','#'));
   mkChart('cSlaBar','bar',labels,d.map(x=>x.sla_h),{
-    backgroundColor:d.map(x=>(x.sla_h||0)<=4?'#14a98d':'#c9821f'),
+    backgroundColor:d.map(x=>slaOk(x)?'#14a98d':'#c9821f'),
     borderRadius:5, borderSkipped:false,
     ttCb:{label:c=>`${c.raw.toFixed(2)}h`}
   });
@@ -288,7 +288,7 @@ function buildSla(d) {
       </div>
       <div class="detail-line">
         <span class="detail-lbl">1ª Resposta</span>
-        <div class="bar-track"><div class="bar-fill" style="width:${mx?(r.sla_h||0)/mx*100:0}%;background:${(r.sla_h||0)<=4?'var(--good)':'var(--warn)'}"></div></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${mx?(r.sla_h||0)/mx*100:0}%;background:${slaOk(r)?'var(--good)':'var(--warn)'}"></div></div>
         <span class="detail-num">${fmtH(r.sla_h)}</span>
       </div>
       <div class="detail-line">
@@ -326,7 +326,7 @@ function buildSla(d) {
     <div class="metric-list">
       ${[
         ['Resolvidos pelo SE', cnt(d,'resolvido_se','Sim'), total, 'var(--good)', 'Resolução direta sem escalonamento'],
-        ['SLA Cumprido', cnt(d,'sla_cumprido','Sim'), total, 'var(--violet)', 'Primeira resposta dentro de 4h'],
+        ['SLA Cumprido', cnt(d,'sla_cumprido','Sim'), total, 'var(--violet)', `Primeira resposta dentro de ${META_SLA_H}h úteis`],
         ['Recorrentes', rec, total, 'var(--warn)', 'Problema já visto anteriormente'],
         ['Indevidos', indev, total, 'var(--critical)', 'Poderiam ser evitados'],
         ['Com Jira', d.filter(x=>x.tem_jira).length, total, 'var(--info)', 'Geraram demanda de desenvolvimento'],
