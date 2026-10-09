@@ -36,7 +36,8 @@ const mesNomeCompleto = m => { const [y,mm]=m.split('-'); const nome=MES_PT[+mm-
 const CAT_COLORS = { Bug:'#dd6478', Usabilidade:'#968bf4', Performance:'#c9821f', 'Autenticação':'#4f8fe0' };
 const catColor = cat => CAT_COLORS[cat] || '#6f7885';
 // Verde = encerrado · âmbar = em andamento com o time · azul = com N3 · cinza = aguardando cliente
-const STATUS_COLORS = { 'Encerrado':'#14a98d', 'Em andamento':'#c9821f', 'Aguardando N3':'#4f8fe0' };
+// (cinza-claro = respondido, aguardando retorno do cliente)
+const STATUS_COLORS = { 'Encerrado':'#14a98d', 'Em andamento':'#c9821f', 'Aguardando N3':'#4f8fe0', 'Respondido / Aguardando retorno':'#c3cad3' };
 const statusColor = s => STATUS_COLORS[s] || '#8a93a0';
 const TIPO_COLORS = { 'Dúvida':'#968bf4', 'Configuração':'#14a98d', 'Bug':'#dd6478', 'Melhoria':'#c9821f', 'Solicitação':'#4f8fe0' };
 const tipoColor = tp => TIPO_COLORS[tp] || '#6f7885';
