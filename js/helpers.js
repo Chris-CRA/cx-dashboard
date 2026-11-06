@@ -5,6 +5,10 @@
 // se o SLA foi cumprido vem sempre de `sla_cumprido`, calculado na planilha.
 const META_SLA_H = 24;
 const slaOk = r => r.sla_cumprido!=='Não';
+// Observações por mês (ex.: período sem registros por férias). Só exibição: Por Mês e
+// Destaques da Visão Geral com a aba do mês selecionada. Não altera nem filtra o RAW.
+const OBS_MES = { '2026-10': 'Sem registros de 13/10 a 02/11 (período de férias).' };
+const obsMes = m => OBS_MES[m] || '';
 const avg = (a, k) => { const v=a.filter(d=>d[k]!=null).map(d=>d[k]); return v.length? v.reduce((x,y)=>x+y,0)/v.length :0; };
 const cnt = (a,k,v) => a.filter(d=>d[k]===v).length;
 const freq = (a,k) => { const m={}; a.forEach(d=>{const v=d[k]; m[v]=(m[v]||0)+1;}); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };

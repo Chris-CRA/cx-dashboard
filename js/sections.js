@@ -54,6 +54,7 @@ function buildDestaques(d, hist, comparar) {
   itens.push([abertos.length?'var(--warn)':'var(--good)', abertos.length
     ? `<strong>${abertos.length} card${abertos.length!==1?'s':''} em aberto</strong>${antigos?`, ${antigos} há mais de 30 dias`:''}.`
     : 'Nenhum card em aberto.']);
+  if(curMes!=='all' && obsMes(curMes)) itens.push(['var(--ink-faint)', obsMes(curMes)]);
   el.innerHTML = itens.map(([cor,txt])=>`<li style="--dot:${cor}"><span>${txt}</span></li>`).join('');
 }
 
@@ -102,7 +103,10 @@ function buildMensalSection(d) {
   mkChart('cMensal','bar',mLabels,mCounts,{
     backgroundColor:months.map((m,i)=>parcial[i]?'rgba(150,139,244,0.35)':m===refMes?'#968bf4':'#3a4452'),
     borderRadius:8, borderSkipped:false,
-    ttCb:{label:c=>`${c.raw} cards${parcial[c.dataIndex]?' (mês parcial)':''}`}
+    ttCb:{label:c=>{
+      const t = `${c.raw} cards${parcial[c.dataIndex]?' (mês parcial)':''}`, o = obsMes(months[c.dataIndex]);
+      return o ? [t, o] : t;
+    }}
   });
 
   mkChart('cSlaMensal','bar',mLabels,mSla,{
@@ -110,9 +114,10 @@ function buildMensalSection(d) {
     borderRadius:8, borderSkipped:false,
     ttCb:{label:c=>`${c.raw.toFixed(2)}h${parcial[c.dataIndex]?' (mês parcial)':''}`}
   });
-  document.getElementById('mensalNota').textContent = parcial.some(Boolean)
-    ? `* Mês parcial (início da base ou mês em andamento).${refMes?` Em destaque: ${mesNomeCompleto(refMes).toLowerCase()}, último mês fechado.`:''}`
-    : '';
+  const notas = [];
+  if(parcial.some(Boolean)) notas.push(`* Mês parcial (início da base ou mês em andamento).${refMes?` Em destaque: ${mesNomeCompleto(refMes).toLowerCase()}, último mês fechado.`:''}`);
+  months.filter(obsMes).forEach(m=>notas.push(`${mesNomeCompleto(m)}: ${obsMes(m)}`));
+  document.getElementById('mensalNota').textContent = notas.join(' ');
 
   // Compare body
   const compareBody = document.getElementById('compareBody');
@@ -140,7 +145,7 @@ function buildMensalSection(d) {
           </div>`).join('')}
       </div>`;
   };
-  const mkMonthSummary = (data, label, base) => {
+  const mkMonthSummary = (data, label, base, obs) => {
     if(!data.length) return `
       <div class="compare-col">
         <div class="compare-head"><span class="compare-month">${label}</span></div>
@@ -153,6 +158,7 @@ function buildMensalSection(d) {
           <span class="compare-month">${label}</span>
           <span class="compare-count">${data.length}</span>
         </div>
+        ${obs ? `<div class="metric-desc">${obs}</div>` : ''}
         <div class="metric-list">
           ${cats.map(([k,v])=>`
             <div class="metric-item">
@@ -180,7 +186,7 @@ function buildMensalSection(d) {
   const selMonths = months.filter(m=>sel.includes(m));
   const cols = selMonths.length<=4 ? `repeat(${selMonths.length},1fr)` : `repeat(${selMonths.length},minmax(280px,1fr))`;
   const base = selMonths.length===2 ? {mes:selMonths[0], data:RAW.filter(x=>x.mes===selMonths[0])} : null;
-  compareBody.innerHTML = `<div class="compare-wrap" style="grid-template-columns:${cols}">${selMonths.map((m,i)=>mkMonthSummary(RAW.filter(x=>x.mes===m),mesNomeCompleto(m),i===1?base:null)).join('')}</div>`;
+  compareBody.innerHTML = `<div class="compare-wrap" style="grid-template-columns:${cols}">${selMonths.map((m,i)=>mkMonthSummary(RAW.filter(x=>x.mes===m),mesNomeCompleto(m),i===1?base:null,obsMes(m))).join('')}</div>`;
 }
 
 // ── TABLE ──
