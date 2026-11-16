@@ -1,10 +1,8 @@
 <div align="center">
 
-<img src="assets/Screenshot.jpg" alt="Memed" width="180">
+# Support CX · Dashboard
 
-# Support CX · Dashboard Executivo
-
-**Painel executivo do suporte da Memed.** Visão consolidada dos chamados do Jira CX,
+**Painel executivo do time de suporte.** Visão consolidada dos chamados do Jira CX,
 sem backend, sem build e sem instalação.
 
 [![Abrir dashboard](https://img.shields.io/badge/▶_abrir_dashboard-GitHub_Pages-7c72e8?style=for-the-badge)](https://chris-cra.github.io/cx-dashboard/)
@@ -192,6 +190,6 @@ Sem framework, bundler ou gerenciador de pacotes, de propósito.
 
 <div align="center">
 
-Feito para o time de Support CX · Memed
+Feito para o time de Support CX
 
 </div>
